@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeLife — Chronic Conditions Household · PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════ THEME ENGINE ═══════════ */
+:root {
+  --navy:#0D1B2A; --navy-mid:#1A2F45;
+  --critical:#DC2626; --high:#EA580C; --medium:#D97706; --low:#16A34A;
+  --radius:12px;
+  --shadow:0 2px 12px rgba(13,27,42,0.08);
+  --shadow-lg:0 8px 32px rgba(13,27,42,0.14);
+}
+body[data-theme="chronic"] { --accent:#7A3B46; --accent-dark:#5F2E37; --accent-rgb:122,59,70; }
+body[data-theme="injury"] { --accent:#6E8CA0; --accent-dark:#56708D; --accent-rgb:110,140,160; }
+body[data-theme="teal"]   { --accent:#14B8A6; --accent-dark:#0D9488; --accent-rgb:20,184,166; }
+body[data-theme="amber"]  { --accent:#F59E0B; --accent-dark:#D97706; --accent-rgb:245,158,11; }
+body[data-theme="rose"]   { --accent:#E11D48; --accent-dark:#BE123C; --accent-rgb:225,29,72; }
+body[data-theme="violet"] { --accent:#7C3AED; --accent-dark:#6D28D9; --accent-rgb:124,58,237; }
+body[data-theme="ocean"]  { --accent:#2563EB; --accent-dark:#1D4ED8; --accent-rgb:37,99,235; }
+body[data-theme="forest"] { --accent:#16A34A; --accent-dark:#15803D; --accent-rgb:22,163,74; }
+body[data-mode="light"] {
+  --bg:#F9F6F0; --surface:#FFFFFF; --surface-2:#EDE6D6; --tile:#F9F6F0;
+  --ink:#0D1B2A; --ink-mid:#3A4A5C; --ink-soft:#6B7A8D; --line:#EDE6D6;
+  --critical-bg:#FEF2F2; --high-bg:#FFF7ED; --medium-bg:#FFFBEB; --low-bg:#F0FDF4;
+}
+body[data-mode="dark"] {
+  --bg:#0B1420; --surface:#13202F; --surface-2:#1C2C3E; --tile:#0F1A28;
+  --ink:#EDF2F7; --ink-mid:#B7C4D1; --ink-soft:#8194A7; --line:#243549;
+  --critical-bg:rgba(220,38,38,.16); --high-bg:rgba(234,88,12,.16);
+  --medium-bg:rgba(217,119,6,.16); --low-bg:rgba(22,163,74,.16);
+  --shadow:0 2px 12px rgba(0,0,0,0.35); --shadow-lg:0 8px 32px rgba(0,0,0,0.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+
+/* ═══════════ TOP BAR ═══════════ */
+.topbar{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 20px;min-height:58px;position:relative;z-index:300;border-bottom:2px solid var(--accent);flex-wrap:wrap;}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.topbar-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-family:'Sora',sans-serif;color:#fff;box-shadow:0 2px 8px rgba(var(--accent-rgb),.4);}
+.topbar-name{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.topbar-name span{color:var(--accent);}
+.topbar-tagline{font-size:11px;color:rgba(255,255,255,.5);font-style:italic;}
+.topbar-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.progress-pill{background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.progress-pill span{color:#fff;font-size:13px;}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;}
+.tool-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s;position:relative;}
+.tool-btn:hover{background:rgba(var(--accent-rgb),.3);border-color:var(--accent);}
+.tool-btn .tb-label{font-size:11px;}
+@media(max-width:820px){.tool-btn .tb-label{display:none;}.topbar-tagline{display:none;}}
+
+/* ═══════════ DROPDOWN PANELS ═══════════ */
+.dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:10px;display:none;z-index:400;min-width:190px;}
+.dropdown.open{display:block;}
+.dropdown-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink-soft);padding:4px 8px 8px;}
+.theme-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border:none;background:none;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink);text-align:left;}
+.theme-row:hover{background:rgba(var(--accent-rgb),.08);}
+.theme-row.selected{background:rgba(var(--accent-rgb),.12);}
+.theme-swatch{width:18px;height:18px;border-radius:6px;flex-shrink:0;}
+.theme-row .check-mark{margin-left:auto;color:var(--accent);font-weight:800;}
+
+/* ═══════════ HERO ═══════════ */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#3a2703 100%);padding:48px 32px 40px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(var(--accent-rgb),.14) 0%,transparent 60%);}
+.hero-emoji{font-size:64px;line-height:1;margin-bottom:12px;display:block;position:relative;}
+.hero-title{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:6px;position:relative;}
+.hero-subtitle{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:20px;position:relative;}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:relative;}
+.hero-badge{background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.35);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:5px;cursor:pointer;transition:background .2s,transform .15s;user-select:none;}
+.hero-badge:hover{background:rgba(var(--accent-rgb),.28);transform:translateY(-1px);}
+
+/* ═══════════ PROGRESS ═══════════ */
+.progress-section{background:var(--surface);border-bottom:1px solid var(--line);padding:0 32px;height:46px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:290;box-shadow:0 2px 8px rgba(13,27,42,.06);}
+.progress-label{font-size:12px;font-weight:600;color:var(--ink-soft);white-space:nowrap;}
+.progress-track{flex:1;height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));border-radius:4px;width:0%;transition:width .4s ease;}
+.progress-count{font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap;}
+.celebrate{display:none;background:linear-gradient(135deg,rgba(var(--accent-rgb),.15),rgba(var(--accent-rgb),.05));border-bottom:1px solid rgba(var(--accent-rgb),.3);padding:14px 32px;text-align:center;font-weight:700;color:var(--accent-dark);font-size:15px;font-family:'Sora',sans-serif;}
+.celebrate.show{display:block;}
+
+/* ═══════════ SEARCH ═══════════ */
+.search-wrap{padding:20px 20px 0;max-width:860px;margin:0 auto;}
+.search-box{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:14px;font-family:'Inter',sans-serif;color:var(--ink);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7A8D' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;transition:border-color .2s;}
+.search-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.1);}
+.search-no-results{text-align:center;padding:40px;color:var(--ink-soft);font-size:14px;display:none;}
+
+/* ═══════════ ZONE TABS ═══════════ */
+.zone-tabs{background:var(--surface);border-bottom:2px solid var(--line);display:flex;overflow-x:auto;padding:0 24px;gap:4px;scrollbar-width:none;position:sticky;top:46px;z-index:200;}
+.zone-tabs::-webkit-scrollbar{display:none;}
+.zone-tab{display:flex;align-items:center;gap:7px;padding:14px 18px;border:none;background:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--ink-soft);white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-2px;}
+.zone-tab:hover{color:var(--accent);background:rgba(var(--accent-rgb),.05);}
+.zone-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.zone-tab-count{background:var(--surface-2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;color:var(--ink-soft);}
+.zone-tab.active .zone-tab-count{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
+
+/* ═══════════ MAIN / STATS ═══════════ */
+.main{max-width:860px;margin:0 auto;padding:28px 20px 60px;}
+.stats-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+.stat-pill{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;user-select:none;}
+.stat-pill:hover{border-color:var(--accent);}
+.stat-pill.filter-on{border-color:var(--accent);background:rgba(var(--accent-rgb),.08);box-shadow:0 0 0 2px rgba(var(--accent-rgb),.15);}
+.stat-dot{width:8px;height:8px;border-radius:50%;}
+.stat-dot.critical{background:var(--critical);}.stat-dot.high{background:var(--high);}.stat-dot.medium{background:var(--medium);}.stat-dot.low{background:var(--low);}
+.stat-count{font-size:15px;font-weight:700;}
+.risk-legend{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink-soft);}
+.legend-dot{width:8px;height:8px;border-radius:3px;}
+
+/* ═══════════ ZONE PANEL ═══════════ */
+.zone-panel{display:none;}
+.zone-panel.active{display:block;}
+.zone-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding:20px 24px;background:var(--surface);border-radius:var(--radius);border:1px solid rgba(var(--accent-rgb),.2);box-shadow:var(--shadow);}
+.zone-icon{width:52px;height:52px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.06));border:2px solid rgba(var(--accent-rgb),.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.zone-header-text h2{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.zone-header-text p{font-size:13px;color:var(--ink-soft);}
+
+/* ═══════════ CHECK CARDS ═══════════ */
+.checks-list{display:flex;flex-direction:column;gap:10px;}
+.check-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s;}
+.check-card:hover{box-shadow:var(--shadow-lg);}
+.check-card.completed{border-color:rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.03);}
+.check-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;}
+.check-checkbox{width:22px;height:22px;min-width:22px;border:2px solid var(--surface-2);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:13px;background:var(--surface);}
+.check-card.completed .check-checkbox{background:var(--accent);border-color:var(--accent);color:#fff;}
+.check-num{font-size:10px;font-weight:700;color:var(--ink-soft);min-width:30px;font-family:'Sora',sans-serif;}
+.check-risk{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.risk-critical{background:var(--critical-bg);color:var(--critical);}
+.risk-high{background:var(--high-bg);color:var(--high);}
+.risk-medium{background:var(--medium-bg);color:var(--medium);}
+.risk-low{background:var(--low-bg);color:var(--low);}
+.check-title{flex:1;font-size:14px;font-weight:600;color:var(--ink);line-height:1.4;}
+.check-card.completed .check-title{color:var(--ink-soft);text-decoration:line-through;}
+.check-chevron{font-size:12px;color:var(--ink-soft);transition:transform .25s;min-width:16px;}
+.check-card.open .check-chevron{transform:rotate(180deg);}
+.check-detail{display:none;padding:0 18px 18px 18px;border-top:1px solid var(--line);}
+.check-card.open .check-detail{display:block;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+@media(max-width:600px){.detail-grid{grid-template-columns:1fr;}}
+.detail-item{background:var(--tile);border-radius:8px;padding:11px 13px;}
+.detail-item.full{grid-column:1/-1;}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--accent-dark);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+body[data-mode="dark"] .detail-label{color:var(--accent);}
+.detail-value{font-size:13px;color:var(--ink);line-height:1.55;}
+.tip-box{margin-top:12px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.08),rgba(var(--accent-rgb),.04));border:1px solid rgba(var(--accent-rgb),.25);border-left:4px solid var(--accent);border-radius:8px;padding:11px 14px;display:flex;gap:10px;align-items:flex-start;}
+.tip-icon{font-size:16px;line-height:1;margin-top:1px;}
+.tip-text{font-size:13px;color:var(--ink);line-height:1.55;}
+.tip-text strong{color:var(--accent-dark);font-weight:700;}
+body[data-mode="dark"] .tip-text strong{color:var(--accent);}
+.measurement-box{margin-top:10px;background:rgba(var(--accent-rgb),.05);border:1px solid var(--line);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--ink-mid);line-height:1.5;font-family:'Sora',sans-serif;}
+.measurement-box strong{color:var(--ink);font-size:11px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px;}
+
+/* ═══════════ ZONE ACTIONS ═══════════ */
+.zone-actions{display:flex;justify-content:flex-end;gap:10px;margin:14px 0 18px;flex-wrap:wrap;}
+.btn{padding:9px 18px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-outline{background:var(--surface);border:1px solid var(--line);color:var(--ink-mid);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;box-shadow:0 2px 8px rgba(var(--accent-rgb),.3);}
+.btn-primary:hover{box-shadow:0 4px 16px rgba(var(--accent-rgb),.4);transform:translateY(-1px);}
+
+/* ═══════════ MODALS ═══════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,42,.6);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;backdrop-filter:blur(3px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);border-top:4px solid var(--accent);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);}
+.modal-head h3{font-family:'Sora',sans-serif;font-size:18px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.modal-close{background:none;border:none;font-size:22px;color:var(--ink-soft);cursor:pointer;line-height:1;padding:4px;}
+.modal-close:hover{color:var(--accent);}
+.modal-body{padding:20px 24px 26px;color:var(--ink-mid);font-size:13.5px;}
+.modal-body h4{font-family:'Sora',sans-serif;font-size:14px;color:var(--ink);margin:16px 0 6px;display:flex;align-items:center;gap:6px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body p{margin-bottom:8px;}
+.modal-body table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0;}
+.modal-body th{text-align:left;padding:7px 10px;background:rgba(var(--accent-rgb),.1);color:var(--ink);font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+.modal-body td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink-mid);}
+.modal-body td strong{color:var(--ink);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;padding:0 24px 22px;flex-wrap:wrap;}
+.rule-list{list-style:none;margin:6px 0;}
+.rule-list li{padding:6px 0 6px 26px;position:relative;border-bottom:1px dashed var(--line);}
+.rule-list li::before{content:'✓';position:absolute;left:2px;color:var(--accent);font-weight:800;}
+
+/* ═══════════ COLLECTION / UPSELL ═══════════ */
+.collection{max-width:860px;margin:0 auto;padding:10px 20px 50px;}
+.collection h3{font-family:'Sora',sans-serif;font-size:18px;color:var(--ink);margin-bottom:4px;}
+.collection>p{font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.module-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;transition:all .2s;}
+.module-card:hover{border-color:var(--accent);box-shadow:var(--shadow);}
+.module-card .m-emoji{font-size:26px;}
+.module-card .m-name{font-family:'Sora',sans-serif;font-weight:700;font-size:13.5px;color:var(--ink);}
+.module-card .m-age{font-size:11.5px;color:var(--ink-soft);}
+.module-tag{margin-top:6px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:6px;padding:3px 8px;align-self:flex-start;}
+.module-tag.owned{background:rgba(var(--accent-rgb),.15);color:var(--accent-dark);}
+body[data-mode="dark"] .module-tag.owned{color:var(--accent);}
+.module-tag.addon{background:var(--surface-2);color:var(--ink-soft);}
+.module-tag.coming{background:transparent;color:var(--ink-soft);border:1px dashed var(--line);}
+
+/* ═══════════ FOOTER ═══════════ */
+.footer{background:var(--navy);color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:12px;line-height:1.8;}
+.footer strong{color:rgba(255,255,255,.8);}
+
+/* ═══════════ TRADEMARK ICON SET ═══════════ */
+.zic svg{width:16px;height:16px;vertical-align:-3px;}
+.zone-tab .zic svg{color:inherit;}
+.topbar-logo svg{width:22px;height:22px;color:#fff;}
+.hero-emoji svg{width:72px;height:72px;color:var(--accent);filter:drop-shadow(0 4px 14px rgba(var(--accent-rgb),.45));}
+.zone-icon svg{width:27px;height:27px;color:var(--accent-dark);}
+body[data-mode="dark"] .zone-icon svg{color:var(--accent);}
+.module-card .m-emoji svg{width:30px;height:30px;color:var(--accent-dark);}
+body[data-mode="dark"] .module-card .m-emoji svg{color:var(--accent);}
+
+/* ═══════════ FLOATING NAV / DISCLAIMERS ═══════════ */
+html{scroll-behavior:smooth;}
+.float-nav{position:fixed;right:16px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:250;}
+html[dir="rtl"] .float-nav{right:auto;left:16px;}
+.float-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--accent-dark);font-size:18px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-lg);transition:all .2s;}
+.float-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-2px);}
+body[data-mode="dark"] .float-btn{color:var(--accent);}
+.zone-disclaimer{margin-top:18px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;font-size:11.5px;color:var(--ink-soft);text-align:center;}
+.print-disclaimer{display:none;}
+
+/* ═══════════ PRINT ═══════════ */
+#cheat-print{display:none;}
+@media print{
+  body{background:#fff !important;color:#000;font-size:11px;margin:0 !important;padding:0 !important;}
+  .topbar,.hero,.search-wrap,.zone-tabs,.progress-section,.zone-actions,.stats-bar,.collection,.modal-overlay,.celebrate,.dropdown{display:none !important;}
+  .main{max-width:100%;padding:0 0 30px;}
+  .check-card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid;margin-bottom:6px;}
+  .check-detail{display:block !important;border-top:1px solid #ddd;}
+  .check-chevron{display:none;}
+  .zone-panel{display:block !important;page-break-before:auto;}
+  .zone-header{box-shadow:none;border:1px solid #ccc;margin-top:14px;}
+  body.print-zone .zone-panel{display:none !important;}
+  body.print-zone .zone-panel.active{display:block !important;}
+  body.print-cheat .main,body.print-cheat .footer,body.print-cheat .zone-panel,body.print-cheat .print-disclaimer{display:none !important;}
+  body.print-cheat #cheat-print{display:block !important;}
+  #cheat-print{margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cp-card{border:2.5px solid #0D1B2A;border-radius:16px;overflow:hidden;font-family:'Inter',sans-serif;color:#0D1B2A;height:272mm;display:flex;flex-direction:column;page-break-inside:avoid;page-break-after:avoid;}
+  .cp-head{background:#0D1B2A !important;color:#fff;display:flex;align-items:center;gap:12px;padding:13px 22px;}
+  .cp-head svg{width:38px;height:38px;color:var(--accent);}
+  .cp-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;line-height:1.2;}
+  .cp-title em{color:var(--accent);font-style:normal;}
+  .cp-sub{font-size:11.5px;color:rgba(255,255,255,.78);margin-top:2px;}
+  .cp-tag{margin-left:auto;font-size:10px;font-style:italic;color:rgba(255,255,255,.65);text-align:right;}
+  .cp-contacts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:11px 22px;background:rgba(var(--accent-rgb),.09) !important;}
+  .cp-chip{border:1.2px solid rgba(var(--accent-rgb),.55);border-radius:8px;padding:5px 9px;background:#fff !important;}
+  .cp-chip b{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--accent-dark);}
+  .cp-chip span{font-size:12px;font-weight:700;}
+  .cp-cols{display:flex;gap:20px;padding:13px 22px 6px;flex:1;min-height:0;overflow:hidden;}
+  .cp-cols h3{font-family:'Sora',sans-serif;font-size:13px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin:0 0 8px;}
+  .cp-rules{flex:1.15;}
+  .cp-rules ul{list-style:none;margin:0;padding:0;}
+  .cp-rules li{font-size:11px;line-height:1.5;padding:4px 0 4px 18px;position:relative;border-bottom:1px dashed #ddd;}
+  .cp-rules li::before{content:'✓';position:absolute;left:0;color:var(--accent-dark);font-weight:800;}
+  html[dir="rtl"] .cp-rules li{padding:4px 18px 4px 0;}
+  html[dir="rtl"] .cp-rules li::before{left:auto;right:0;}
+  .cp-numsec{flex:1;}
+  .cp-numsec table{width:100%;border-collapse:collapse;font-size:10.5px;}
+  .cp-numsec td{border-bottom:1px solid #eee;padding:4px 5px;vertical-align:top;}
+  .cp-numsec td strong{color:#0D1B2A;}
+  .cp-notes{margin:6px 22px 10px;border:1.5px dashed var(--accent);border-radius:10px;padding:8px 13px;font-size:11px;white-space:pre-wrap;max-height:34mm;overflow:hidden;}
+  .cp-notes b{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-dark);display:block;margin-bottom:2px;}
+  .cp-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#0D1B2A !important;color:rgba(255,255,255,.85);padding:9px 22px;font-size:10px;line-height:1.55;margin-top:auto;}
+  .cp-foot b{color:var(--accent);}
+  .cp-qr{display:flex;align-items:center;gap:10px;text-align:right;}
+  .cp-qr img{width:68px;height:68px;background:#fff;border-radius:8px;padding:3px;}
+  .cp-qr .qr-ph{width:68px;height:68px;border:1.5px dashed rgba(255,255,255,.5);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:8.5px;text-align:center;color:rgba(255,255,255,.6);padding:4px;}
+  .footer{background:#fff;color:#555;}
+  .footer strong{color:#000;}
+  .float-nav{display:none !important;}
+  .print-disclaimer{display:block !important;position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:8.5px;color:#666;border-top:1px solid #ccc;padding:3px 0;background:#fff;}
+  @page{size:A4;margin:10mm 10mm 12mm;}
+}
+</style>
+</head>
+<body data-theme="chronic" data-mode="light">
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo" id="logo-icon">S</div>
+    <div>
+      <div class="topbar-name">Safe<span>Life</span></div>
+      <div class="topbar-tagline">To all moms by a mom · NEBOSH &amp; OSHA Professional</div>
+    </div>
+  </div>
+  <div class="topbar-meta">
+    <div class="toolbar">
+      <button class="tool-btn" id="btn-search" title="Search all checks">🔍</button>
+      <button class="tool-btn" id="btn-manual" title="User Manual">📖<span class="tb-label" data-i18n="manual">Manual</span></button>
+      <button class="tool-btn" id="btn-cheat" title="Emergency Cheat Sheet">🚨<span class="tb-label" data-i18n="cheat">Cheat Sheet</span></button>
+      <button class="tool-btn" id="btn-print" title="Print / Save as PDF">🖨️<span class="tb-label" data-i18n="printPdf">Print / PDF</span></button>
+      <button class="tool-btn" id="btn-save" title="Save progress to file">💾<span class="tb-label" data-i18n="save">Save</span></button>
+      <button class="tool-btn" id="btn-load" title="Load saved progress">📂<span class="tb-label" data-i18n="load">Load</span></button>
+      <button class="tool-btn" id="btn-lang" title="Language" style="display:none">🌐<span class="tb-label" id="lang-label">EN</span>
+        <div class="dropdown" id="dd-lang"></div>
+      </button>
+      <button class="tool-btn" id="btn-theme" title="Colour theme">🎨<span class="tb-label" data-i18n="theme">Theme</span>
+        <div class="dropdown" id="dd-theme"></div>
+      </button>
+      <button class="tool-btn" id="btn-mode" title="Light / dark mode">🌙</button>
+    </div>
+    <div class="progress-pill"><span id="topbar-done">0</span>&nbsp;/ 84 <span data-i18n="checksDone" style="color:inherit;font-size:12px;">checks done</span></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-emoji" id="hero-icon">💊</span>
+  <div class="hero-title" data-i18n="heroTitle">Chronic Conditions Household</div>
+  <div class="hero-subtitle" data-i18n="heroSub">84 practical safety checks across 6 zones · Supporting confident, everyday management of epilepsy, diabetes, heart conditions and severe allergies at home</div>
+  <div class="hero-badges">
+    <div class="hero-badge" data-zone="1"><span class="zic" data-zi="z1"></span> <span data-i18n="bz1">Medication Management</span></div>
+    <div class="hero-badge" data-zone="2"><span class="zic" data-zi="z2"></span> <span data-i18n="bz2">Emergency Response</span></div>
+    <div class="hero-badge" data-zone="3"><span class="zic" data-zi="z3"></span> <span data-i18n="bz3">Allergen &amp; Trigger Avoidance</span></div>
+    <div class="hero-badge" data-zone="4"><span class="zic" data-zi="z4"></span> <span data-i18n="bz4">Daily Living Safety</span></div>
+    <div class="hero-badge" data-zone="5"><span class="zic" data-zi="z5"></span> <span data-i18n="bz5">Records &amp; Coordination</span></div>
+    <div class="hero-badge" data-zone="6"><span class="zic" data-zi="z6"></span> <span data-i18n="bz6">Family &amp; Caregiver Prep</span></div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <div class="progress-label" data-i18n="overallProgress">Overall Progress</div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-count" id="progress-count">0 of 84</div>
+</div>
+<div class="celebrate" id="celebrate">🎉 <span data-i18n="celebrate">All 84 checks complete — your household is set up to manage chronic conditions with confidence. Print your checklist as a keepsake.</span></div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input class="search-box" type="text" id="search-input" placeholder="Search checks… e.g. insulin storage, seizure response, epinephrine, blood glucose, allergen, action plan…">
+</div>
+
+<!-- ZONE TABS -->
+<div class="zone-tabs" id="zone-tabs">
+  <button class="zone-tab active" data-zone="1"><span class="zic" data-zi="z1"></span> <span data-i18n="z1">Medication Management &amp; Administration Safety</span> <span class="zone-tab-count" id="ztc-1">0/14</span></button>
+  <button class="zone-tab" data-zone="2"><span class="zic" data-zi="z2"></span> <span data-i18n="z2">Emergency Recognition &amp; Response</span> <span class="zone-tab-count" id="ztc-2">0/14</span></button>
+  <button class="zone-tab" data-zone="3"><span class="zic" data-zi="z3"></span> <span data-i18n="z3">Allergen &amp; Trigger Avoidance</span> <span class="zone-tab-count" id="ztc-3">0/14</span></button>
+  <button class="zone-tab" data-zone="4"><span class="zic" data-zi="z4"></span> <span data-i18n="z4">Home Environment &amp; Daily Living Safety</span> <span class="zone-tab-count" id="ztc-4">0/14</span></button>
+  <button class="zone-tab" data-zone="5"><span class="zic" data-zi="z5"></span> <span data-i18n="z5">Records, Communication &amp; Healthcare Coordination</span> <span class="zone-tab-count" id="ztc-5">0/14</span></button>
+  <button class="zone-tab" data-zone="6"><span class="zic" data-zi="z6"></span> <span data-i18n="z6">Family, School/Work &amp; Caregiver Preparedness</span> <span class="zone-tab-count" id="ztc-6">0/14</span></button>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content">
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-pill" data-risk="critical"><span class="stat-dot critical"></span><span class="stat-count" id="s-critical">0</span> <span data-i18n="critical">Critical</span></div>
+    <div class="stat-pill" data-risk="high"><span class="stat-dot high"></span><span class="stat-count" id="s-high">0</span> <span data-i18n="high">High</span></div>
+    <div class="stat-pill" data-risk="medium"><span class="stat-dot medium"></span><span class="stat-count" id="s-medium">0</span> <span data-i18n="medium">Medium</span></div>
+    <div class="stat-pill" data-risk="low"><span class="stat-dot low"></span><span class="stat-count" id="s-low">0</span> <span data-i18n="low">Low</span></div>
+    <div class="risk-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--critical)"></div><span data-i18n="legendCritical">Critical = immediate action</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--high)"></div><span data-i18n="legendHigh">High = urgent attention</span></div>
+    </div>
+  </div>
+  <div id="search-no-results" class="search-no-results"><span data-i18n="noResults">No checks match your search. Try different keywords.</span><br><span data-i18n="notCovered" style="font-size:12.5px;"></span></div>
+</div>
+
+<!-- COLLECTION -->
+<div class="collection">
+  <h3 data-i18n="collTitle">The SafeLife Collection</h3>
+  <p data-i18n="collSub">One safety system for every stage of life. Add more modules any time — each works exactly like this one.</p>
+  <div class="collection-grid" id="collection-grid"></div>
+</div>
+
+<!-- SITUATION MODULES -->
+<div class="collection" style="padding-top:0;">
+  <h3>Situation Modules</h3>
+  <p>Real-life situations and conditions — each its own complete, standalone 84-check system. Available separately as they launch.</p>
+  <div class="collection-grid" id="situation-grid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <strong>SafeLife</strong> · Chronic Conditions Household Module · PRO Edition<br>
+  Created by a NEBOSH &amp; OSHA trained HSE professional · "To all moms by a mom"<br>
+  Evidence base: WHO Medication Without Harm · ADA (American Diabetes Association) general guidance · recognised epilepsy, cardiac and anaphylaxis first-aid guidance · recognised diabetes/epilepsy/cardiac/allergy care guidance<br>
+  <span style="color:rgba(255,255,255,.35);" data-i18n="disclaimer">This checklist is educational and does not replace professional medical advice. Always consult your doctor, specialist nurse, or a qualified healthcare professional for guidance specific to your family member's condition.</span>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-manual">
+  <div class="modal">
+    <div class="modal-head"><h3>📖 <span data-i18n="manualTitle">User Manual</span></h3><button class="modal-close" data-close="modal-manual">✕</button></div>
+    <div class="modal-body" id="manual-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-cheat">
+  <div class="modal">
+    <div class="modal-head"><h3>🚨 <span data-i18n="cheatTitle">Emergency Cheat Sheet</span></h3><button class="modal-close" data-close="modal-cheat">✕</button></div>
+    <div class="modal-body" id="cheat-body"></div>
+    <div class="modal-actions"><button class="btn btn-outline" id="btn-seller" title="Seller: set this product's QR code" style="margin-right:auto;">⚙</button><button class="btn btn-primary" id="btn-print-cheat" data-i18n="printCheat">🖨️ Print cheat sheet</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-seller">
+  <div class="modal">
+    <div class="modal-head"><h3>⚙ Seller Settings</h3><button class="modal-close" data-close="modal-seller">✕</button></div>
+    <div class="modal-body" id="seller-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-print">
+  <div class="modal">
+    <div class="modal-head"><h3>🖨️ <span data-i18n="printTitle">Print or Save as PDF</span></h3><button class="modal-close" data-close="modal-print">✕</button></div>
+    <div class="modal-body">
+      <p data-i18n="printHint">Choose what to print. To save as a PDF instead of printing on paper, choose "Save as PDF" as the printer in the print dialog.</p>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:6px;" data-i18n="printNote">All checks are automatically expanded to full detail when printing — no need to open them first.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="print-zone" data-i18n="printZone">Current zone only</button>
+      <button class="btn btn-outline" id="print-cheat2" data-i18n="printCheat2">Cheat sheet</button>
+      <button class="btn btn-primary" id="print-all" data-i18n="printAll">Full checklist (all 84)</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="load-file" accept=".json" style="display:none">
+
+<!-- FLOATING CHECK NAVIGATION -->
+<div class="float-nav">
+  <button class="float-btn" id="fn-top" title="Back to top">⤒</button>
+  <button class="float-btn" id="fn-prev" title="Previous check">↑</button>
+  <button class="float-btn" id="fn-next" title="Next check">↓</button>
+</div>
+
+<!-- PRINT PAGE DISCLAIMER (repeats on every printed page) -->
+<div class="print-disclaimer" data-i18n="disclaimer">This checklist is educational and does not replace professional medical advice. Always consult your doctor, specialist nurse, or a qualified healthcare professional for guidance specific to your family member's condition.</div>
+
+<div id="cheat-print"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// SELLER BRANDING — edit these three lines to make it yours
+// ═══════════════════════════════════════════
+const BRAND_NAME = 'The Snag Tag';
+const STORE_URL  = '';   // e.g. 'thesnagtag.gumroad.com' — printed under the QR code on the cheat sheet
+const QR_IMAGE   = '';   // paste your QR code as a data URL: 'data:image/png;base64,...'
+
+// ═══════════════════════════════════════════
+// I18N — full interface language packs (check content in English, verified guidance)
+// ═══════════════════════════════════════════
+const I18N = {
+en:{name:'English',manual:'Manual',cheat:'Cheat Sheet',printPdf:'Print / PDF',save:'Save',load:'Load',theme:'Theme',checksDone:'checks done',heroTitle:'Chronic Conditions Household',heroSub:'84 practical safety checks across 6 zones · Supporting confident, everyday management of epilepsy, diabetes, heart conditions and severe allergies at home',bz1:'Medication Management',bz2:'Emergency Response',bz3:'Allergen &amp; Trigger Avoidance',bz4:'Daily Living Safety',bz5:'Records &amp; Coordination',bz6:'Family &amp; Caregiver Prep',overallProgress:'Overall Progress',ofWord:'of',z1:'Medication Management &amp; Administration Safety',z2:'Emergency Recognition &amp; Response',z3:'Allergen &amp; Trigger Avoidance',z4:'Home Environment &amp; Daily Living Safety',z5:'Records, Communication &amp; Healthcare Coordination',z6:'Family, School/Work &amp; Caregiver Preparedness',zd1:'14 checks: organising multiple medications, safe storage including insulin and refrigerated medicines, avoiding interactions, refill tracking, safe administration, and keeping an emergency medication list current.',zd2:'14 checks: recognising a seizure, hypoglycaemia and hyperglycaemia, a cardiac event and anaphylaxis, using an epinephrine auto-injector correctly, and keeping written action plans visible and current.',zd3:'14 checks: identifying and avoiding specific allergens and triggers, label reading, cross-contamination prevention, communicating with schools and carers, and keeping rescue medication within reach.',zd4:'14 checks: home safety adaptations for the specific conditions in the household, glucose-monitoring supplies kept organised, bathroom safety during a medical event, and safe exercise and sleep considerations.',zd5:'14 checks: keeping a current medical summary, coordinating between healthcare providers, tracking monitoring logs and appointments, understanding when to seek urgent versus emergency care, and advocating in medical settings.',zd6:'14 checks: briefing school, work and carers, a portable emergency kit for outings, travel considerations, sibling support, caregiver self-care, and building confidence in living well with a chronic condition.',critical:'Critical',high:'High',medium:'Medium',low:'Low',legendCritical:'Critical = immediate action',legendHigh:'High = urgent attention',noResults:'No checks match your search. Try different keywords.',searchPh:'Search checks… e.g. insulin storage, seizure response, epinephrine, blood glucose, allergen, action plan…',who:'Who',what:'What',where:'Where',why:'Why',how:'How',standards:'Standards &amp; Measurements',example:'Real-World Example',quickTip:'Quick Win',markAll:'Mark All Complete',unmarkAll:'Unmark All',expandAll:'Expand All',collapseAll:'Collapse All',celebrate:'All 84 checks complete — your household is set up to manage chronic conditions with confidence. Print your checklist as a keepsake.',collTitle:'The SafeLife Collection',collSub:'One safety system for every stage of life. Every module below is a complete, standalone 84-check system — available separately, or as the full 12-module bundle.',owned:'✓ Current Module',addon:'Available Separately',disclaimer:'This checklist is educational and does not replace professional medical advice. Always consult your doctor, specialist nurse, or a qualified healthcare professional for guidance specific to your family member\'s condition.',manualTitle:'User Manual',cheatTitle:'Emergency Cheat Sheet',printTitle:'Print or Save as PDF',printHint:'Choose what to print. To save as a PDF instead of printing on paper, choose "Save as PDF" as the printer in the print dialog.',printZone:'Current zone only',printCheat2:'Cheat sheet',printAll:'Full checklist (all 84)',printCheat:'🖨️ Print cheat sheet',langNote:'Safety check content is written in English (verified international guidance). Interface labels switch language.',saved:'Progress saved',loaded:'Progress loaded',cheatContacts:'My emergency contacts',cheatHint:'Make it yours: edit any name or number, add or delete rows. Everything saves automatically on this device and prints on your cheat sheet.',addContact:'+ Add contact',myNotes:'My notes',notesPh:'Allergies, medication list, specialist contact details, appointment dates, school/carer access notes…',rules:'The 10 golden rules',keyNums:'Key measurements at a glance',delRow:'Remove',notCovered:'Topic not covered in this module? Check the cheat sheet, ask your health professional, or request it via your SafeLife store page — new checks arrive in free updates.',printNote:'All checks are automatically expanded to full detail when printing — no need to open them first.',mn1:'Newborn',mn2:'Infant',mn3:'Toddler',mn4:'Preschooler',mn5:'School-Age',mn6:'Teenager',mn7:'Young Adult',mn8:'Adult',mn9:'Middle-Aged Adult',mn10:'Active Seniors',mn11:'Advanced Age',mn12:'90+ and Longevity',
+manualBody:'<h4>🚀 Getting started</h4><p>84 checks in 6 zones. Tap any check to see Who / What / Where / Why / How, exact measurements and standards, a real-world example and a quick-win tip.</p><h4>✅ Progress</h4><p>Tick the box to complete a check — bars and counters update instantly. Each zone has Mark All / Unmark All and Expand / Collapse All buttons, and the floating ↑ ↓ arrows jump between checks.</p><h4>🔍 Search &amp; filters</h4><p>The search box filters all 84 checks live across every zone. Tap a risk pill (Critical / High / Medium / Low) to filter by risk level; tap again to clear.</p><h4>🎨 Personalise</h4><p>Pick a colour theme and light or dark mode — remembered on this device. Make the cheat sheet yours: add your own emergency numbers and notes.</p><h4>💾 Save &amp; 🖨️ Print</h4><p>Progress saves automatically on this device as you go. To move your progress to another device or keep a backup, tap 💾 Save — this downloads a small file. On the new device (or after clearing your browser), open the same checklist, tap 📂 Load, and choose that file to restore your progress exactly where you left off. Keep the file somewhere safe, like your email or a notes app. Print the full checklist, one zone, or your personalised cheat sheet — all checks expand automatically when printing. Choose "Save as PDF" in the print dialog to create a PDF.</p>'}
+};
+
+// ═══════════════════════════════════════════
+// TRADEMARK ICON SET — same outline family as the whole collection
+// ═══════════════════════════════════════════
+const _svg = inner => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+const ICONS = {
+  stage: _svg('<rect x="5" y="9.6" width="14" height="4.8" rx="2.4" transform="rotate(-38 12 12)"/><path d="M12 9.6v4.8" transform="rotate(-38 12 12)"/>'),
+  z1: _svg('<rect x="3.6" y="7" width="16.8" height="12" rx="2.2"/><path d="M3.6 13h16.8M9 7v12M14.4 7v12"/>'),
+  z2: _svg('<path d="M12 20.2s-7.2-4.6-7.2-10.1a4.4 4.4 0 0 1 7.2-3.4 4.4 4.4 0 0 1 7.2 3.4c0 5.5-7.2 10.1-7.2 10.1z"/><path d="M7.4 12h2.4l1.3-2.6 1.8 5.2 1.3-2.6h2.4"/>'),
+  z3: _svg('<path d="M12 3.2l7 2.6v5.6c0 5-3 8.4-7 9.4-4-1-7-4.4-7-9.4V5.8z"/><path d="M12 8.4v5"/><circle cx="12" cy="16.2" r="0.7" fill="currentColor" stroke="none"/>'),
+  z4: _svg('<path d="M4 11.5l8-6.8 8 6.8"/><path d="M6.2 10.2V19a1 1 0 0 0 1 1h9.6a1 1 0 0 0 1-1v-8.8"/><path d="M10 15h4M12 13v4"/>'),
+  z5: _svg('<rect x="5.2" y="4.6" width="13.6" height="16.8" rx="2"/><path d="M9 4.6V3.6A1.4 1.4 0 0 1 10.4 2.2h3.2A1.4 1.4 0 0 1 15 3.6v1"/><path d="M8.4 10.4h7.2M8.4 13.6h7.2M8.4 16.8h4.4"/>'),
+  z6: _svg('<circle cx="8.4" cy="6.6" r="2.4"/><path d="M4 19v-2.4a4.4 4.4 0 0 1 4.4-4.4 4.4 4.4 0 0 1 4.4 4.4V19"/><circle cx="17" cy="8" r="2"/><path d="M14.6 19v-2a3 3 0 0 1 3-3h.8a3 3 0 0 1 3 3v2"/>'),
+  stages: [
+    _svg('<circle cx="12" cy="13" r="6.5"/><path d="M12 6.5c0-1.8.8-2.7 2.3-3"/><circle cx="9.7" cy="12.2" r="0.65" fill="currentColor" stroke="none"/><circle cx="14.3" cy="12.2" r="0.65" fill="currentColor" stroke="none"/><path d="M9.9 15c1.4 1.2 2.8 1.2 4.2 0"/>'),
+    _svg('<circle cx="12" cy="7" r="3.2"/><path d="M6.8 20.5v-3.2a5.2 5.2 0 0 1 10.4 0v3.2"/>'),
+    _svg('<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/>'),
+    _svg('<rect x="6.5" y="8" width="11" height="12" rx="3"/><path d="M9.5 8V6.2a2.5 2.5 0 0 1 5 0V8"/><rect x="9.7" y="13" width="4.6" height="4" rx="1"/><path d="M6.5 11.5h11"/>'),
+    _svg('<path d="M5 15v-1.5a7 7 0 0 1 14 0V15"/><rect x="4" y="14" width="3.4" height="6" rx="1.6"/><rect x="16.6" y="14" width="3.4" height="6" rx="1.6"/>'),
+    _svg('<path d="M12 4.5L2.8 9l9.2 4.5L21.2 9z"/><path d="M6.8 11.5v3.8c0 1.6 10.4 1.6 10.4 0v-3.8"/><path d="M21.2 9v5"/>'),
+    _svg('<rect x="3.8" y="8" width="16.4" height="11.2" rx="2"/><path d="M9.5 8V6.6A1.6 1.6 0 0 1 11.1 5h1.8a1.6 1.6 0 0 1 1.6 1.6V8M3.8 12.8h16.4"/>'),
+    _svg('<path d="M8.5 9.5v-4c2.3 1.8 4.7 1.8 7 0v4a3.5 3.5 0 0 1-7 0z"/><path d="M12 13v8M12 18c-1.8-.4-3-1.4-3.6-3"/>'),
+    _svg('<circle cx="8.5" cy="5" r="2.1"/><path d="M8.5 7.1c-1.2.4-2 1.5-2 2.8v1.8"/><path d="M8.7 9.6c3.4 0 5.8 2.5 5.8 5.7 0 2.2-1.2 3.9-3 4.9"/><path d="M6.5 11.7v3.4c0 2.2 1 3.9 2.7 5"/>'),
+    _svg('<circle cx="12" cy="5.8" r="2.3"/><path d="M8.2 17.3a3.8 3.8 0 0 1 7.6 0v1.2"/><path d="M6.6 20.5h10.8"/><path d="M8.6 20.5v-3.2M15.4 20.5v-3.2"/><path d="M12 13.4c-.9-.8-1.5-1.3-1.5-1.9a.85.85 0 0 1 1.5-.55.85.85 0 0 1 1.5.55c0 .6-.6 1.1-1.5 1.9z"/>'),
+    _svg('<circle cx="7" cy="5.3" r="2.2"/><path d="M4 19v-3.4a3.4 3.4 0 0 1 3.4-3.4h.6a3.4 3.4 0 0 1 2.6 1.2l1 1.2"/><circle cx="17" cy="9.4" r="1.7"/><path d="M13.9 19v-2.4a2.6 2.6 0 0 1 2.6-2.6h1a2.6 2.6 0 0 1 2.6 2.6V19"/><path d="M9.5 15.3l2.7 1.4"/>'),
+    _svg('<path d="M6.4 8.1c-2.2 0-4 1.8-4 3.9s1.8 3.9 4 3.9c3.4 0 5.2-2.5 5.7-3.9.5-1.4 2.3-3.9 5.7-3.9 2.2 0 4 1.8 4 3.9s-1.8 3.9-4 3.9c-3.4 0-5.2-2.5-5.7-3.9-.5-1.4-2.3-3.9-5.6-3.9z"/>'),
+    _svg('<path d="M8.5 8.2V6.6a3.5 3.5 0 0 1 7 0v1.6"/><rect x="4.3" y="8.2" width="15.4" height="11.8" rx="3.6"/><path d="M4.3 13.2h15.4"/><rect x="10.4" y="10.6" width="3.2" height="2" rx="0.5"/>'),
+    _svg('<circle cx="7.8" cy="12" r="5.3"/><circle cx="16.2" cy="12" r="5.3"/><circle cx="6.3" cy="11.2" r="0.6" fill="currentColor" stroke="none"/><circle cx="9.3" cy="11.2" r="0.6" fill="currentColor" stroke="none"/><circle cx="14.7" cy="11.2" r="0.6" fill="currentColor" stroke="none"/><circle cx="17.7" cy="11.2" r="0.6" fill="currentColor" stroke="none"/><path d="M6.5 13.8c.9.7 1.8.7 2.7 0M14.9 13.8c.9.7 1.8.7 2.7 0"/>'),
+    _svg('<rect x="6" y="4.6" width="12" height="16.4" rx="2.2"/><path d="M9.4 4.6V3.7A1.7 1.7 0 0 1 11.1 2h1.8a1.7 1.7 0 0 1 1.7 1.7v.9"/><path d="M9 13.2l2.2 2.2L15.5 11"/>'),
+    _svg('<path d="M4 11.5l8-6.8 8 6.8"/><path d="M6.2 10.2V19a1 1 0 0 0 1 1h9.6a1 1 0 0 0 1-1v-8.8"/><path d="M9.4 19v-4.6h5.2V19"/><path d="M9 13l2.2 1.6 3.4-3"/>'),
+    _svg('<path d="M12 3v18"/><path d="M8 5h8"/><path d="M9.6 13h4.8"/>'),
+    _svg('<rect x="5" y="9.6" width="14" height="4.8" rx="2.4" transform="rotate(-38 12 12)"/><path d="M12 9.6v4.8" transform="rotate(-38 12 12)"/>')
+  ]
+};
+function injectIcons(){
+  document.getElementById('logo-icon').innerHTML = ICONS.stage;
+  document.getElementById('hero-icon').innerHTML = ICONS.stage;
+  document.querySelectorAll('.zic[data-zi]').forEach(el=>{ el.innerHTML = ICONS[el.dataset.zi] || ''; });
+}
+// ═══════════════════════════════════════════
+// ALL 84 CHECKS — CHRONIC CONDITIONS HOUSEHOLD
+// ═══════════════════════════════════════════
+const ZONES = [
+  {
+    id: 1, name: 'Medication Management & Administration Safety', icon: '💊',
+    desc: '14 checks covering organising multiple medications, safe storage including insulin and refrigerated medicines, avoiding interactions, refill tracking, and safe administration.',
+    checks: [
+      { id:'cc01', num:'CC01', risk:'critical', title:'A Current, Complete Medication List Exists',
+        who:'Every family member taking regular medication, and anyone who may need to step in during an emergency',
+        what:'No single up-to-date list of every medication, dose, and schedule that a paramedic, relief caregiver, or school nurse could use immediately',
+        where:'Kept in the emergency kit, on the fridge, and saved digitally where any caregiver can access it',
+        why:'In an emergency, responders need to know exactly what a person takes within moments — a missing or outdated list can delay safe treatment or cause a dangerous interaction',
+        how:'List every medication, dose, timing and prescribing doctor; update it the same day any change happens; store a paper copy where it will actually be found, plus a photo on a trusted phone',
+        measurement:'Recognised diabetes/epilepsy/cardiac/allergy care guidance recommends reviewing and updating the medication list after every appointment or dosage change, and at least every few months even without changes.',
+        example:'A family keeps a laminated medication list taped inside a kitchen cupboard door and a photo of it in a shared family phone album, so a grandparent babysitting knows exactly what to give and when.',
+        tip:'Date the list every time it\'s updated, so anyone using it can see at a glance whether it\'s current.' },
+
+      { id:'cc02', num:'CC02', risk:'critical', title:'Medications Sorted by Person and Clearly Labelled',
+        who:'Households managing multiple people\'s medications, or one person on several medications',
+        what:'Mixing up medications between family members, or between look-alike pills, due to unclear organisation',
+        where:'The medication storage area',
+        why:'Look-alike packaging and multiple household members increase the risk of the wrong person receiving the wrong medication or dose',
+        how:'Store each person\'s medication in a separate, clearly labelled container or shelf area; never combine pills from different prescriptions into one unlabelled container',
+        measurement:'Recognised medication-safety guidance recommends keeping medications in their original, labelled packaging wherever practical.',
+        example:'A family uses separate labelled bins for each child\'s asthma and allergy medication so a rushed morning never means grabbing the wrong inhaler.',
+        tip:'Use a different colour label or bin per person if more than one household member takes regular medication.' },
+
+      { id:'cc03', num:'CC03', risk:'critical', title:'Insulin and Refrigerated Medicines Stored at the Correct Temperature',
+        who:'Anyone using insulin or other medication requiring refrigeration',
+        what:'Refrigerated medication left at room temperature too long, or accidentally frozen, reducing its effectiveness',
+        where:'The refrigerator, and any cool bag used when travelling',
+        why:'Insulin and similar medications lose potency outside their required temperature range, which can lead to unpredictable blood glucose control',
+        how:'Store unopened insulin in the refrigerator as directed, keep in-use insulin at the temperature range stated on the product information, and always have a cool-bag backup plan for power cuts or outings',
+        measurement:'Recognised diabetes care guidance: unopened insulin typically refrigerated at 2–8°C (36–46°F); many in-use insulin types remain stable at room temperature up to roughly 25–30°C (77–86°F) for about 28 days — always confirm with the specific product information.',
+        example:'A family keeps a small insulated cool bag with a reusable ice pack ready near the door for any outing lasting more than an hour or two.',
+        tip:'Never store insulin in the freezer compartment or door shelf where temperature swings most — use a middle shelf instead.' },
+
+      { id:'cc04', num:'CC04', risk:'high', title:'Safe, Locked Storage for All Medications',
+        who:'Households with young children, visiting children, or anyone at risk of accidental ingestion',
+        what:'Medications left accessible on countertops or in unlocked drawers or bags',
+        where:'Kitchen, bathroom, bedside tables, and any bag or purse carried into the home',
+        why:'Accidental ingestion of medication is a leading cause of childhood poisoning, and locked storage protects both children and confused or unwell family members',
+        how:'Store all medications in a locked box or high, out-of-reach cabinet; keep bags and purses containing medication off the floor and out of a young child\'s reach',
+        measurement:'Recognised child-safety and poison-prevention guidance recommends locked storage out of sight and reach of children for all medications.',
+        example:'A grandparent\'s blood pressure tablets are moved from a visible kitchen counter into a small lockbox once a toddler starts visiting regularly.',
+        tip:'Apply the same locked-storage rule to visitors\' bags and coats, not just the household\'s own medication.' },
+
+      { id:'cc05', num:'CC05', risk:'high', title:'A Written System Prevents Missed or Double Doses',
+        who:'Anyone managing multiple daily doses, or caregivers administering medication to a dependent',
+        what:'Uncertainty over whether a dose was already given, leading to a missed dose or an accidental double dose',
+        where:'Wherever medication is administered',
+        why:'Missed and double doses are both genuine risks with multiple medications or multiple caregivers, and a simple tracking system prevents both',
+        how:'Use a labelled pill organiser, a checklist, or a medication app to record each dose as it is given, and agree as a household on one consistent system everyone uses',
+        measurement:'Recognised medication-safety guidance recommends a dedicated tracking method whenever more than one caregiver or more than one daily dose is involved.',
+        example:'A weekly pill organiser with morning/evening compartments lets a co-parent confirm at a glance that today\'s doses were already given.',
+        tip:'Keep the tracking system in the same spot as the medication itself, so recording a dose becomes an automatic last step.' },
+
+      { id:'cc06', num:'CC06', risk:'high', title:'A Clear Plan for What to Do About a Missed Dose',
+        who:'Anyone on a regular medication schedule',
+        what:'Guessing whether to give a missed dose late, skip it, or double the next one, without confirmed guidance',
+        where:'Anywhere a dose is missed',
+        why:'The correct response to a missed dose varies significantly by medication, and guessing can be genuinely unsafe for some medicines',
+        how:'Ask the prescribing doctor or pharmacist in advance what to do for a missed dose of each medication, and write the answer directly on the medication list',
+        measurement:'No universal numeric standard — confirm the specific missed-dose instruction for each medication with the prescriber or pharmacist.',
+        example:'The family\'s written list notes "missed dose of evening insulin — call the diabetes nurse line before giving a late dose" so no one has to guess late at night.',
+        tip:'Ask this question at every prescription review, since the right answer can change if a dose or medication changes.' },
+
+      { id:'cc07', num:'CC07', risk:'high', title:'Refills Tracked Before Supply Runs Low',
+        who:'Anyone on ongoing medication, especially anything life-sustaining',
+        what:'Running out of a critical medication because a refill was requested too late',
+        where:'Wherever prescriptions are managed',
+        why:'Missing even a day of some medications (such as insulin, anti-seizure medication, or heart medication) can trigger a serious medical event',
+        how:'Track remaining supply and request refills with enough lead time to cover delays, and keep a small emergency buffer where the prescription allows',
+        measurement:'Recognised medication-safety guidance suggests requesting a refill once roughly a week or more of supply remains for any essential medication.',
+        example:'A reminder is set on the household calendar ten days before the anti-seizure medication is due to run out, giving time for a delayed pharmacy order.',
+        tip:'Ask the pharmacist about the longest supply interval available, so refills are needed less often.' },
+
+      { id:'cc08', num:'CC08', risk:'high', title:'Interactions Checked Before Adding Any New Medicine',
+        who:'Anyone taking multiple regular medications, including supplements',
+        what:'A new prescription, over-the-counter medicine, or supplement added without checking it against existing medications',
+        where:'Wherever medication decisions are made',
+        why:'Interactions between medications — including common over-the-counter products and supplements — can reduce effectiveness or cause harm',
+        how:'Tell every prescriber and pharmacist about all current medications and supplements, and ask specifically about interactions before starting anything new',
+        measurement:'Recognised medication-safety guidance recommends an interaction check with a pharmacist or prescriber before adding any new medicine, including over-the-counter products.',
+        example:'A pharmacist flags that a common over-the-counter decongestant should be avoided alongside a specific heart medication, preventing an unplanned interaction.',
+        tip:'Keep the full medication list with you (or on your phone) at every pharmacy visit, so nothing is left out of the interaction check.' },
+
+      { id:'cc09', num:'CC09', risk:'medium', title:'Medication Administered Safely to a Child or Dependent',
+        who:'Caregivers giving medication to a child or a dependent adult',
+        what:'Incorrect dosing, rushed administration, or a child resisting medication in a way that risks choking or spitting it out unnoticed',
+        where:'Wherever medication is given to a child or dependent',
+        why:'Children and dependents may not be able to communicate discomfort or confirm they swallowed a dose, so a calm, confirmed routine matters',
+        how:'Use the correct dosing device (not a kitchen spoon), stay with the person until the dose is confirmed taken, and keep the routine calm and consistent',
+        measurement:'Recognised paediatric medication-safety guidance recommends using the dosing syringe or cup provided with liquid medication rather than household spoons.',
+        example:'A parent uses the oral syringe that came with a liquid antibiotic rather than an estimated teaspoon, avoiding a significant dosing error.',
+        tip:'A small, calm routine after medication time can reduce resistance without turning it into a battle.' },
+
+      { id:'cc10', num:'CC10', risk:'medium', title:'Medication Storage Reviewed When Household Routines Change',
+        who:'Any household where visitors, new caregivers, or a house move change the usual storage setup',
+        what:'Medication left in its usual spot even though a new visiting child, pet, or unfamiliar caregiver changes the risk',
+        where:'Wherever medication is normally stored',
+        why:'A storage location that was safe with the usual household members may not be safe when circumstances change temporarily',
+        how:'Reassess medication storage whenever a new child visits regularly, a new caregiver starts, or the household moves or travels',
+        measurement:'No numeric standard — reassess storage safety at each meaningful change in household circumstances.',
+        example:'A family temporarily moves medication to a higher shelf during a week when young cousins are staying over.',
+        tip:'Build a quick "does this still make sense" storage check into hosting any overnight guest with children.' },
+
+      { id:'cc11', num:'CC11', risk:'medium', title:'Expired or Discontinued Medication Disposed of Safely',
+        who:'Any household storing medication',
+        what:'Expired, discontinued, or unused medication kept indefinitely, increasing clutter and the risk of accidental use',
+        where:'Medication storage areas',
+        why:'Expired medication can lose effectiveness or, in rare cases, change chemically, and keeping unnecessary medication increases confusion and accidental-ingestion risk',
+        how:'Check expiry dates during a regular medication review, and dispose of unneeded medication through a pharmacy take-back program or recognised safe-disposal method rather than household rubbish or drains',
+        measurement:'Recognised guidance recommends checking medication expiry dates at least every few months and disposing of unneeded medication through a pharmacy or designated take-back service.',
+        example:'A quarterly "medicine cabinet check" clears out a discontinued prescription that had been sitting in the cabinet for over a year.',
+        tip:'Ask the pharmacy directly what disposal options they offer — many accept unused medication at no cost.' },
+
+      { id:'cc12', num:'CC12', risk:'medium', title:'Medication Travels Safely When the Household Is Away From Home',
+        who:'Anyone on regular medication travelling, staying overnight elsewhere, or attending extended outings',
+        what:'Medication left behind, packed insufficiently, or exposed to temperature extremes during travel',
+        where:'Luggage, car, and any temporary accommodation',
+        why:'A missed dose or spoiled refrigerated medication away from home can turn a minor oversight into an urgent problem far from the usual pharmacy or doctor',
+        how:'Pack more than the exact number of doses needed, keep medication in carry-on or hand luggage rather than checked storage, and use an insulated bag for anything requiring temperature control',
+        measurement:'Recognised travel-health guidance recommends packing a few days\' extra supply beyond the planned trip length wherever possible.',
+        example:'A family packs insulin in an insulated travel case in a carry-on bag rather than checked luggage, avoiding both temperature extremes and lost-luggage risk.',
+        tip:'Keep a copy of prescriptions with the travelling medication in case a replacement is needed unexpectedly.' },
+
+      { id:'cc13', num:'CC13', risk:'low', title:'Medication Names and Doses Are Written, Not Just Remembered',
+        who:'Any household relying on memory for medication details',
+        what:'Medication details known only by memory, with no written backup if the usual person is unavailable',
+        where:'Wherever medication decisions or emergencies happen',
+        why:'Memory is an unreliable emergency backup, especially under the stress of a medical event',
+        how:'Write every medication name, dose, and timing down in the same place as the medical summary, not just in one person\'s memory',
+        measurement:'No numeric standard — the goal is a written record accessible to more than one household member.',
+        example:'A spouse who has never needed to know the exact insulin dose can find it instantly on the written list when asked to help during an unusual morning.',
+        tip:'Ask a second household member to locate the medication list without help, as a quick test that it\'s genuinely findable.' },
+
+      { id:'cc14', num:'CC14', risk:'low', title:'Medication List Includes Allergies and Past Reactions',
+        who:'Anyone with a known medication allergy or past adverse reaction',
+        what:'A medication list that shows current medications but omits known allergies or past bad reactions',
+        where:'The written medical summary and medication list',
+        why:'A new prescriber or emergency responder needs allergy and reaction history to avoid repeating a past problem',
+        how:'Add a clearly marked allergies and reactions section to the medication list, including what happened and when known',
+        measurement:'No numeric standard — the goal is a complete, clearly labelled allergy history alongside the current medication list.',
+        example:'A note reading "penicillin — rash, age 6" prevents a well-meaning locum doctor from re-prescribing it during an unrelated illness.',
+        tip:'Update this section immediately after any new reaction, however minor it seemed at the time.' }
+    ]
+  },
+  {
+    id: 2, name: 'Emergency Recognition & Response', icon: '🚨',
+    desc: '14 checks covering recognising a seizure, hypoglycaemia and hyperglycaemia, a cardiac event and anaphylaxis, and keeping written action plans visible and current.',
+    checks: [
+      { id:'cc15', num:'CC15', risk:'critical', title:'Recognising a Seizure and Responding Safely',
+        who:'Anyone with epilepsy in the household, and anyone who spends regular time with them',
+        what:'Not recognising a seizure in progress, or responding in a way that risks injury, such as restraining the person or placing something in their mouth',
+        where:'Anywhere in or around the home',
+        why:'The right first response — protecting the head, clearing the area, and timing the seizure — prevents injury and gives responders accurate information if help is needed',
+        how:'Clear the area of hard or sharp objects, cushion the head, time the seizure from when it starts, and never restrain the person or put anything in their mouth',
+        measurement:'Recognised epilepsy care guidance: call emergency services if a seizure lasts longer than 5 minutes, if a second seizure follows before full recovery, or if this is a first-ever seizure.',
+        example:'A family member starts timing on their phone the moment a seizure begins, so they know confidently at the 5-minute mark whether to call for help.',
+        tip:'Practise the timing habit even during a short seizure — it builds the reflex for the time it matters most.' },
+
+      { id:'cc16', num:'CC16', risk:'critical', title:'Safe Recovery Position After a Seizure or Loss of Consciousness',
+        who:'Anyone recovering from a seizure or a fainting/loss-of-consciousness event',
+        what:'Leaving a person on their back, or unsupervised, immediately after a seizure or loss of consciousness',
+        where:'Wherever the event occurs',
+        why:'Lying on the back risks airway obstruction, especially if there is vomiting or excess saliva during recovery',
+        how:'Gently turn the person onto their side once the active seizure movement stops, keep the airway clear, and stay with them until they are fully alert',
+        measurement:'Recognised first-aid guidance: place in the recovery position (on the side, chin tilted slightly up) and remain until fully conscious and oriented.',
+        example:'After a seizure ends, a parent gently rolls their child onto their side and stays close, watching breathing until full alertness returns.',
+        tip:'Note anything unusual about this seizure compared to previous ones — new details matter to the medical team.' },
+
+      { id:'cc17', num:'CC17', risk:'critical', title:'Recognising Hypoglycaemia and Responding Immediately',
+        who:'Anyone with diabetes managed with insulin or certain other medications',
+        what:'Missing early signs of low blood glucose — shakiness, sweating, confusion, irritability — until the person can no longer safely help themselves',
+        where:'Anywhere in daily life',
+        why:'Hypoglycaemia can progress quickly from mild symptoms to confusion or loss of consciousness, and fast, correct treatment prevents a medical emergency',
+        how:'Check blood glucose at the first sign of symptoms, give a fast-acting carbohydrate if low, recheck after the recommended interval, and call emergency services if the person cannot swallow safely or does not improve',
+        measurement:'Recognised ADA guidance: treat when blood glucose is below 3.9 mmol/L (70 mg/dL); severe hypoglycaemia is below 3.0 mmol/L (54 mg/dL) and may require emergency glucagon or emergency services.',
+        example:'A teenager keeps glucose tablets in a school bag side pocket and treats symptoms immediately rather than waiting to see if they pass.',
+        tip:'Recheck blood glucose about 15 minutes after treating a low, and treat again if it hasn\'t come up enough.' },
+
+      { id:'cc18', num:'CC18', risk:'critical', title:'Recognising Hyperglycaemia and Knowing When It Is Urgent',
+        who:'Anyone with diabetes',
+        what:'Ignoring persistent high blood glucose symptoms — excessive thirst, frequent urination, fatigue, blurred vision — assuming they will resolve on their own',
+        where:'Anywhere in daily life',
+        why:'Prolonged or very high blood glucose can progress to a serious complication requiring urgent medical care, particularly if accompanied by vomiting, confusion, or difficulty breathing',
+        how:'Monitor blood glucose as directed, follow the individualised sick-day or high-glucose plan from the care team, and seek urgent care for very high readings combined with vomiting, confusion, or laboured breathing',
+        measurement:'Recognised ADA guidance suggests contacting the care team for persistently elevated readings and seeking emergency care if high glucose is combined with vomiting, confusion, fruity-smelling breath, or difficulty breathing.',
+        example:'A written sick-day plan tells the family exactly which glucose reading and symptom combination means "call the diabetes team now" rather than "wait and see."',
+        tip:'Keep ketone testing supplies on hand if the care team has recommended them for high-glucose situations.' },
+
+      { id:'cc19', num:'CC19', risk:'critical', title:'Recognising Signs of a Cardiac Event and Calling for Help Promptly',
+        who:'Anyone with a known heart condition, and household members who may witness a cardiac event',
+        what:'Delaying a call for emergency help while waiting to see if chest pain, breathlessness, or other symptoms pass',
+        where:'Anywhere in or around the home',
+        why:'Rapid recognition and an early emergency call significantly improve outcomes in a genuine cardiac event, and delay is one of the most common preventable factors in poor outcomes',
+        how:'Learn the specific warning signs relevant to the person\'s condition from their cardiologist, and call emergency services immediately for chest pain, severe breathlessness, or collapse rather than waiting',
+        measurement:'Recognised cardiac care guidance: call emergency services immediately for chest pain, pressure, or breathlessness that is new, severe, or does not resolve within a few minutes of rest.',
+        example:'A family agrees in advance that any chest pain lasting more than a few minutes means calling emergency services immediately, with no "let\'s wait and see" step.',
+        tip:'Keep a note of the person\'s specific cardiac diagnosis and usual medications visible for responders, since it changes the guidance they\'ll give.' },
+
+      { id:'cc20', num:'CC20', risk:'critical', title:'Recognising Anaphylaxis and Using an Epinephrine Auto-Injector Correctly',
+        who:'Anyone with a diagnosed severe allergy, and anyone who may need to help them',
+        what:'Hesitating to use an epinephrine auto-injector out of uncertainty or fear of "overreacting," while symptoms progress',
+        where:'Anywhere an allergen exposure could occur',
+        why:'Epinephrine is the first-line emergency treatment for anaphylaxis, and delay in using it is associated with worse outcomes — there is no safe alternative to using it when anaphylaxis is suspected',
+        how:'Learn to recognise the signs of anaphylaxis (difficulty breathing, swelling, widespread hives, dizziness, vomiting after allergen exposure), use the auto-injector immediately if suspected, and call emergency services right away, even if symptoms seem to improve',
+        measurement:'Recognised anaphylaxis care guidance: administer epinephrine at the first sign of anaphylaxis; a second dose may be considered after approximately 5–15 minutes without improvement while awaiting emergency services.',
+        example:'A household practises with an expired training auto-injector every year so that using the real one under pressure feels familiar rather than frightening.',
+        tip:'Always call emergency services after using an auto-injector, even if the person seems to recover — symptoms can return.' },
+
+      { id:'cc21', num:'CC21', risk:'high', title:'Written Emergency Action Plans Kept Visible and Current',
+        who:'Every person in the household managing a chronic condition',
+        what:'An emergency action plan that exists somewhere but isn\'t visible, current, or known to everyone who might need it',
+        where:'Kitchen, near the person\'s usual space, and with the emergency kit',
+        why:'In a genuine emergency, a visible written plan removes guesswork exactly when stress makes clear thinking hardest',
+        how:'Post the current action plan somewhere obvious, review and update it with the care team at each relevant appointment, and give a copy to every regular caregiver',
+        measurement:'Recognised chronic-condition care guidance recommends reviewing action plans at least annually, or sooner after any change in diagnosis, medication, or severity.',
+        example:'A laminated seizure action plan is stuck to the inside of a kitchen cupboard door where every visiting relative has seen it.',
+        tip:'Review the plan together as a household once a year, even if nothing has changed — familiarity matters as much as accuracy.' },
+
+      { id:'cc22', num:'CC22', risk:'high', title:'Household Members Trained in Recognition-and-Response, Not Medical Treatment',
+        who:'All regular household members and frequent visitors',
+        what:'Assuming only one person in the household "knows what to do," leaving everyone else unprepared if that person is unavailable',
+        where:'Household-wide',
+        why:'A medical emergency doesn\'t wait for the one trained person to be present — everyone regularly in the home benefits from knowing recognition and the call-for-help steps',
+        how:'Teach every household member and frequent visitor how to recognise each condition\'s warning signs and the immediate call-for-help steps, without expecting anyone to provide medical treatment beyond that',
+        measurement:'No numeric standard — the goal is that every regular household member can recognise an emergency and take the first response and call-for-help steps.',
+        example:'A teenage sibling is shown exactly where the epinephrine auto-injector is kept and taught the recognition signs, even though the food allergy belongs to a younger sibling.',
+        tip:'Repeat the training periodically — confidence fades faster than people expect if it\'s never practised.' },
+
+      { id:'cc23', num:'CC23', risk:'high', title:'Emergency Numbers and Condition Details Immediately Accessible',
+        who:'Anyone calling for emergency help on behalf of a household member',
+        what:'Fumbling for the person\'s diagnosis, medication, or allergy details while on the phone with emergency services',
+        where:'By every phone in the home, and on a phone lock screen where possible',
+        why:'Emergency call handlers can give better guidance faster when the caller has key details ready, and panic makes recall harder',
+        how:'Save key medical details in the phone\'s medical ID or lock-screen feature, and keep a printed version by the landline or in the emergency kit',
+        measurement:'No numeric standard — the goal is immediate access to diagnosis, medication and allergy information during an emergency call.',
+        example:'A phone\'s built-in medical ID feature lists the person\'s epilepsy diagnosis and current medication, visible even from the lock screen without unlocking.',
+        tip:'Test that the medical ID feature is actually visible from the lock screen — some phones require a specific setup step to enable this.' },
+
+      { id:'cc24', num:'CC24', risk:'high', title:'A Backup Person Knows the Emergency Plan for Every Condition',
+        who:'Every household managing a chronic condition',
+        what:'Only one parent or caregiver fully understands the plan, leaving a gap if they are unavailable',
+        where:'Household-wide, and extending to regular carers',
+        why:'Emergencies don\'t wait for the primary caregiver to be home — a genuinely prepared household has more than one person who can respond correctly',
+        how:'Walk a second adult (partner, grandparent, regular sitter) through every action plan in detail, not just a verbal summary, and confirm they know where supplies are kept',
+        measurement:'No numeric standard — the goal is at least one backup adult confidently able to execute each action plan.',
+        example:'A grandparent who babysits weekly is walked through the full seizure and epinephrine plans, not just told "call us if anything happens."',
+        tip:'Test the backup person\'s knowledge with a calm, low-stakes walkthrough rather than assuming a single conversation was enough.' },
+
+      { id:'cc25', num:'CC25', risk:'high', title:'Recognising When a Situation Requires "Call Now," Not "Wait and See"',
+        who:'Every caregiver and household member',
+        what:'Uncertainty about whether a symptom is serious enough to call emergency services, leading to a delay',
+        where:'Anywhere symptoms appear',
+        why:'Hesitation is one of the most common reasons emergency care is delayed, and clear, condition-specific triggers remove the guesswork',
+        how:'Ask the care team to define specific "call emergency services now" triggers for each condition, and write them plainly on the action plan rather than relying on general judgement in the moment',
+        measurement:'No numeric standard — confirm specific emergency triggers for each individual condition with the treating specialist.',
+        example:'An epilepsy action plan states plainly "seizure over 5 minutes = call now" rather than "use your judgement," removing hesitation in the moment.',
+        tip:'When in doubt, call — emergency services would always rather respond to a false alarm than arrive too late.' },
+
+      { id:'cc26', num:'CC26', risk:'medium', title:'Comfort and Reassurance During and After a Medical Event',
+        who:'The person experiencing the event, and those responding',
+        what:'Focusing entirely on the physical response while the person\'s fear, confusion, or embarrassment goes unaddressed',
+        where:'Wherever the event occurs',
+        why:'A calm, reassuring response supports both physical safety and emotional recovery, and reduces the fear associated with future episodes',
+        how:'Speak calmly and reassuringly throughout, especially as awareness returns after a seizure or a severe hypoglycaemic episode, and avoid a crowd of anxious faces if possible',
+        measurement:'No numeric standard — recognised guidance emphasises calm reassurance as part of safe emergency response.',
+        example:'A parent keeps their voice calm and simply says "you\'re safe, I\'m right here" repeatedly as their child regains awareness after a seizure.',
+        tip:'Practise how you\'ll speak in an emergency during a calm moment — it\'s easier to access under real stress if it\'s already familiar.' },
+
+      { id:'cc27', num:'CC27', risk:'medium', title:'Emergency Response Steps Rehearsed, Not Just Written Down',
+        who:'Every household managing a chronic condition',
+        what:'An emergency plan that has never been physically practised, only read',
+        where:'Household-wide',
+        why:'A plan practised at least once becomes noticeably faster and calmer to execute under real pressure than one only ever read',
+        how:'Run a calm practice walkthrough at least once — locating supplies, timing a mock seizure, or rehearsing an epinephrine auto-injector on a trainer device',
+        measurement:'No numeric standard — recognised emergency-preparedness guidance recommends at least one physical rehearsal, not reading alone.',
+        example:'A family does a five-minute "emergency kit scavenger hunt" twice a year so everyone can locate supplies quickly under pressure.',
+        tip:'Make the rehearsal low-pressure and even a little playful for younger household members — it builds familiarity without fear.' },
+
+      { id:'cc28', num:'CC28', risk:'low', title:'A Record Kept of Every Emergency Event',
+        who:'Anyone managing a chronic condition with occasional emergency events',
+        what:'No record of past seizures, hypoglycaemic episodes, or cardiac symptoms, making patterns hard to spot',
+        where:'The medical summary or a dedicated log',
+        why:'Patterns over time — frequency, triggers, timing — give the care team valuable information that a single appointment recall cannot capture',
+        how:'Note the date, duration, apparent trigger, and response for every significant event, and bring the log to appointments',
+        measurement:'No numeric standard — recognised chronic-condition care guidance encourages a running log of significant events for review at appointments.',
+        example:'A simple notes-app log shows the specialist that seizures have clustered around short sleep the night before, prompting a helpful conversation about sleep routine.',
+        tip:'Log events as soon as possible afterwards — details fade quickly even when the event felt unforgettable at the time.' }
+    ]
+  },
+  {
+    id: 3, name: 'Allergen & Trigger Avoidance', icon: '🛡️',
+    desc: '14 checks covering identifying and avoiding specific allergens and triggers, label reading, cross-contamination prevention, and keeping rescue medication within reach.',
+    checks: [
+      { id:'cc29', num:'CC29', risk:'critical', title:'All Specific Allergens and Triggers Clearly Identified',
+        who:'Anyone with a diagnosed severe allergy or a known trigger-sensitive condition',
+        what:'A vague sense of "allergic to nuts" or "sensitive to certain things" without the specific, confirmed list from a specialist',
+        where:'Wherever food, products, or environments are chosen',
+        why:'Precise identification prevents both dangerous exposure and unnecessary over-restriction, and guesswork in either direction carries real risk',
+        how:'Get specific allergens and triggers confirmed in writing by an allergist or specialist, and keep that exact list with the action plan',
+        measurement:'Recognised allergy care guidance recommends specialist-confirmed allergen identification rather than assumption-based avoidance.',
+        example:'An allergist\'s written report specifies "peanut and cashew, confirmed by testing" rather than the family\'s earlier assumption of "all nuts."',
+        tip:'Revisit allergen testing periodically, as sensitivities can occasionally change over time.' },
+
+      { id:'cc30', num:'CC30', risk:'critical', title:'Rescue Medication Kept Within Reach at All Times',
+        who:'Anyone with a severe allergy, asthma, or another condition with prescribed rescue medication',
+        what:'Rescue medication left at home, in another room, or in a bag that isn\'t actually carried',
+        where:'Everywhere the person goes, including short outings',
+        why:'An allergic or asthma reaction can begin within minutes of exposure, and rescue medication that isn\'t physically present cannot help',
+        how:'Carry rescue medication on the person or with a responsible adult at all times, including school, activities, and short errands — treat "just this once" as the exception that causes the most risk',
+        measurement:'Recognised allergy and asthma care guidance recommends rescue medication being carried at all times, not just during identified high-risk activities.',
+        example:'A spare epinephrine auto-injector lives permanently in a school backpack\'s front pocket, separate from the one carried by a parent.',
+        tip:'Set a reminder or habit trigger (like checking the bag by the door) so carrying rescue medication becomes automatic, not a decision made each time.' },
+
+      { id:'cc31', num:'CC31', risk:'high', title:'Food Labels Read Every Time, Including Familiar Products',
+        who:'Anyone managing a food allergy in the household',
+        what:'Assuming a familiar product is still safe without rereading the label, when manufacturers can change ingredients or sourcing without notice',
+        where:'Kitchen, grocery shopping, and anywhere food is brought into the home',
+        why:'Ingredient and manufacturing changes can introduce an allergen into a previously safe product without warning',
+        how:'Reread the full ingredient and allergen statement every time a product is purchased, even ones bought many times before',
+        measurement:'Recognised food-allergy care guidance recommends checking labels on every purchase, since formulations can change without a visible packaging update.',
+        example:'A parent catches a manufacturer\'s small-print change adding "may contain traces of tree nuts" to a snack that had never carried that warning before.',
+        tip:'Photograph the safe version of a label once, so a quick comparison is possible if anything looks different next time.' },
+
+      { id:'cc32', num:'CC32', risk:'high', title:'Cross-Contamination Prevented in the Kitchen',
+        who:'Anyone preparing food for someone with a food allergy',
+        what:'Shared utensils, cutting boards, toasters, or cooking surfaces transferring allergen traces into otherwise safe food',
+        where:'Kitchen preparation and cooking surfaces',
+        why:'Even trace amounts of certain allergens can trigger a serious reaction in a sensitised person',
+        how:'Use separate utensils, cutting boards, and where practical a separate toaster or clearly timed cooking order for allergen-free food, and wash all surfaces thoroughly between uses',
+        measurement:'Recognised food-allergy care guidance recommends dedicated equipment or thorough cleaning between allergen and allergen-free food preparation.',
+        example:'A household keeps a labelled red cutting board strictly for allergen-free food preparation, never used for anything containing the family\'s known allergen.',
+        tip:'Prepare the allergen-free meal first, before any allergen-containing food touches the kitchen surfaces that day.' },
+
+      { id:'cc33', num:'CC33', risk:'high', title:'Allergies and Triggers Clearly Communicated to Schools and Carers',
+        who:'Any child or dependent with an allergy or trigger-sensitive condition attending school, daycare, or regular care',
+        what:'A school or carer told about a diagnosis without the specific written detail needed to act safely',
+        where:'School, daycare, activity providers, and any regular carer',
+        why:'General awareness isn\'t enough — carers need the specific allergen list, the action plan, and confirmation of where rescue medication is kept',
+        how:'Provide the school or carer with a written action plan, the specific allergen or trigger list, and rescue medication with clear instructions, and confirm they\'ve reviewed it, not just received it',
+        measurement:'No numeric standard — recognised guidance recommends a written plan and specialist-confirmed allergen list shared directly with every regular carer.',
+        example:'A school nurse is given a folder containing the written anaphylaxis plan, spare auto-injector, and a photo of the child for identification, updated every school year.',
+        tip:'Reconfirm the plan is still on file at the start of every school term, not just once at enrolment.' },
+
+      { id:'cc34', num:'CC34', risk:'high', title:'Safe Substitutions Identified in Advance, Not Improvised',
+        who:'Anyone managing a food allergy or dietary trigger',
+        what:'Improvising a substitute ingredient or meal under time pressure, without checking it\'s genuinely safe',
+        where:'Meal planning and preparation',
+        why:'A rushed substitution is one of the more common ways an accidental exposure happens, especially when a usual product is unavailable',
+        how:'Identify and test safe substitute brands and recipes in advance during a calm moment, and keep a written list of confirmed safe alternatives',
+        measurement:'No numeric standard — recognised food-allergy guidance recommends pre-identifying safe substitutes rather than improvising under pressure.',
+        example:'A family keeps a short list of three confirmed nut-free bread brands, so running out of the usual one doesn\'t mean guessing at the store.',
+        tip:'Test any new substitute at home first, in a small amount, rather than for the first time at a gathering or restaurant.' },
+
+      { id:'cc35', num:'CC35', risk:'high', title:'Known Environmental Triggers Actively Managed',
+        who:'Anyone with a condition sensitive to specific environmental triggers, such as certain seizure or asthma triggers',
+        what:'Known triggers such as flashing lights, specific allergens in the air, or significant sleep deprivation left unmanaged in daily routines',
+        where:'Household environment and daily schedule',
+        why:'Managing confirmed environmental triggers reduces the frequency of episodes without requiring the person to avoid normal life',
+        how:'Identify specific confirmed triggers with the specialist, and make practical adjustments — reduced strobe-effect lighting settings, air filtration for known allergens, or protecting sleep routine — where the trigger is confirmed',
+        measurement:'No numeric standard — confirm specific individual triggers with the treating specialist before making environmental changes.',
+        example:'A household disables a strobe-effect setting on gaming console lighting after a neurologist confirms flashing lights as a contributing seizure trigger for one family member.',
+        tip:'Change one variable at a time when testing whether an environmental adjustment helps, so its effect is actually clear.' },
+
+      { id:'cc36', num:'CC36', risk:'medium', title:'Allergen-Free and Trigger-Free Zones Clearly Established Where Needed',
+        who:'Households with a severe allergy or significant environmental trigger',
+        what:'No clear boundary about which areas or items are allergen-free, causing confusion among visitors and household members',
+        where:'Kitchen, dining area, and shared spaces',
+        why:'A clearly defined safe zone reduces accidental exposure and removes the need to reassess risk in every shared space',
+        how:'Designate and clearly communicate specific allergen-free zones or shared items (such as a snack cupboard) that everyone in the household understands and respects',
+        measurement:'No numeric standard — the goal is a clearly understood, consistently respected boundary.',
+        example:'A "nut-free snack drawer" is clearly labelled and known to every household member and regular visitor as the only place allergen snacks may go.',
+        tip:'Revisit the boundary occasionally as children grow and bring more of their own food choices into the home.' },
+
+      { id:'cc37', num:'CC37', risk:'medium', title:'Visitors and Delivery Food Briefed on Household Allergies',
+        who:'Any household hosting guests or receiving takeaway/delivery food regularly',
+        what:'A well-meaning visitor bringing food containing an unstated allergen, unaware of the household\'s needs',
+        where:'Wherever guests bring food, or delivery food enters the home',
+        why:'Visitors and delivery services cannot protect against a risk they don\'t know about',
+        how:'Mention the specific allergy briefly and matter-of-factly when guests offer to bring food, and check delivery or takeaway ingredient lists rather than assuming',
+        measurement:'No numeric standard — recognised allergy guidance recommends proactively informing anyone bringing food into the home.',
+        example:'A simple text before a family gathering — "quick heads up, we\'re strictly nut-free for one of the kids" — prevents an awkward surprise at the table.',
+        tip:'Frame it briefly and without apology — it\'s a fact to share, not something requiring a lengthy explanation.' },
+
+      { id:'cc38', num:'CC38', risk:'medium', title:'Restaurant and Outing Food Choices Made With Confirmed Safety in Mind',
+        who:'Anyone with a food allergy eating outside the home',
+        what:'Ordering without confirming allergen handling, assuming a menu description is complete',
+        where:'Restaurants, events, and any food eaten away from home',
+        why:'Restaurant kitchens can have cross-contamination risks that aren\'t visible on a menu description',
+        how:'Call ahead or ask staff directly about allergen handling before ordering, and carry rescue medication regardless of the answer given',
+        measurement:'No numeric standard — recognised food-allergy guidance recommends direct allergen confirmation with venue staff rather than relying on menu text alone.',
+        example:'A family calls a restaurant the day before a birthday dinner to confirm they can safely accommodate a shellfish allergy, rather than finding out at the table.',
+        tip:'Have a polite, practised way of asking allergen questions so it becomes a normal habit rather than an awkward moment each time.' },
+
+      { id:'cc39', num:'CC39', risk:'medium', title:'Trigger Diary Kept to Identify Patterns Over Time',
+        who:'Anyone whose condition has known or suspected but unconfirmed triggers',
+        what:'No record connecting episodes to potential triggers, making patterns hard to notice',
+        where:'The household\'s ongoing health record',
+        why:'Some triggers are only identified by noticing a pattern over weeks or months, which a single memory cannot reliably track',
+        how:'Note potential trigger exposures alongside any related symptoms or episodes, and review the pattern with the specialist periodically',
+        measurement:'No numeric standard — recognised chronic-condition guidance encourages an ongoing trigger diary for conditions with suspected but unconfirmed triggers.',
+        example:'A trigger diary reveals that a child\'s eczema flares consistently follow a specific swimming pool visit, prompting a helpful conversation with their doctor.',
+        tip:'Keep the diary simple — a date, a possible trigger, and a symptom note is enough to reveal a pattern over time.' },
+
+      { id:'cc40', num:'CC40', risk:'medium', title:'Non-Food Allergens Identified and Managed',
+        who:'Anyone with an allergy to something other than food, such as latex, certain fabrics, insect stings, or specific medications',
+        what:'Household focus on food allergies alone, overlooking a confirmed non-food allergen',
+        where:'Wherever the specific non-food allergen might appear',
+        why:'Non-food allergens can be just as serious and are sometimes overlooked because household routines are built around food safety alone',
+        how:'Identify all confirmed allergens, not only food-related ones, and adjust household products, first-aid supplies, and activity choices accordingly',
+        measurement:'No numeric standard — recognised allergy guidance recommends managing all specialist-confirmed allergens, food and non-food alike.',
+        example:'A household switches to latex-free adhesive bandages in the first-aid kit after confirming a family member\'s latex allergy.',
+        tip:'Ask the allergist directly whether any non-food allergens were identified during testing, since these are sometimes mentioned only briefly.' },
+
+      { id:'cc41', num:'CC41', risk:'low', title:'Allergy-Alert Identification Worn or Carried Where Appropriate',
+        who:'Anyone with a severe, potentially life-threatening allergy',
+        what:'No visible indication of a serious allergy to a stranger or first responder if the person cannot communicate during a reaction',
+        where:'Worn on the person or carried with rescue medication',
+        why:'A medical-alert bracelet or card gives responders crucial information in the exact moment the person may not be able to speak for themselves',
+        how:'Consider a medical-alert bracelet, card, or phone medical ID for anyone with a severe allergy, particularly for older children and adults who spend time away from direct supervision',
+        measurement:'No numeric standard — recognised allergy guidance suggests medical-alert identification as a helpful addition for severe or life-threatening allergies.',
+        example:'A teenager wears a simple medical-alert bracelet noting "severe peanut allergy — epinephrine in bag" for outings without direct parental supervision.',
+        tip:'Let the person choose a style they\'re comfortable wearing consistently — one left in a drawer offers no protection.' },
+
+      { id:'cc42', num:'CC42', risk:'low', title:'Allergen and Trigger Information Reviewed as the Person Grows or Changes',
+        who:'Any child or dependent whose allergy or trigger profile may change over time',
+        what:'Relying on an allergen or trigger list confirmed years earlier without checking whether anything has changed',
+        where:'The written allergen/trigger record',
+        why:'Some allergies are outgrown and some triggers change over time, and an outdated list can lead to unnecessary restriction or, less often, a missed new sensitivity',
+        how:'Revisit allergen and trigger testing with the specialist at recommended intervals, particularly as a child grows',
+        measurement:'No numeric standard — confirm the recommended retesting interval with the treating allergist or specialist.',
+        example:'A follow-up allergy test during the teenage years confirms an egg allergy has resolved, allowing the family to safely relax a long-standing restriction.',
+        tip:'Don\'t self-test at home to check if an allergy has resolved — any reintroduction should be guided and confirmed by a specialist.' }
+    ]
+  },
+  {
+    id: 4, name: 'Home Environment & Daily Living Safety', icon: '🏠',
+    desc: '14 checks covering home safety adaptations for the specific conditions in the household, monitoring supplies kept organised, and safe exercise and sleep considerations.',
+    checks: [
+      { id:'cc43', num:'CC43', risk:'high', title:'Clear Floor Space Maintained for Post-Seizure Recovery',
+        who:'Anyone with epilepsy',
+        what:'Cluttered floor space, sharp furniture corners, or hard obstacles near where a seizure could occur',
+        where:'Bedrooms, living areas, and anywhere the person spends significant time',
+        why:'A seizure can cause a fall, and clear space around common resting or sitting areas reduces injury risk during the event',
+        how:'Keep floor space around beds, favourite seating, and play areas clear of sharp-cornered furniture, and consider corner guards on unavoidable hard edges',
+        measurement:'Recognised epilepsy home-safety guidance recommends clearing hard or sharp objects from areas where seizures are more likely to occur.',
+        example:'A glass coffee table is replaced with a rounded, softer-edged one in the main living room after a seizure diagnosis.',
+        tip:'Walk through the main living spaces specifically imagining a fall in any direction, not just towards furniture directly in front.' },
+
+      { id:'cc44', num:'CC44', risk:'high', title:'Blood Glucose Monitoring Supplies Organised and Accessible',
+        who:'Anyone with diabetes who self-monitors or is monitored by a caregiver',
+        what:'Testing supplies scattered, difficult to find quickly, or running low without notice',
+        where:'A consistent, accessible household location plus a portable kit',
+        why:'Quick, confident access to monitoring supplies supports both routine management and fast response during a suspected low or high',
+        how:'Keep a fully stocked, dedicated monitoring kit in a consistent spot, check supply levels weekly, and keep a portable duplicate for outings',
+        measurement:'Recognised diabetes care guidance recommends keeping monitoring supplies fully stocked and readily accessible at all times.',
+        example:'A dedicated basket by the kitchen counter holds the glucose meter, strips, and lancets in the same spot every single day.',
+        tip:'Do a quick supply count on the same day each week so a low stock never becomes a surprise.' },
+
+      { id:'cc45', num:'CC45', risk:'high', title:'Bathroom Safety Considered for the Specific Medical Event Risk',
+        who:'Anyone whose condition carries a risk of sudden loss of consciousness, seizure, or severe hypoglycaemia',
+        what:'Bathing or showering alone during a period when a medical event is a genuine possibility',
+        where:'Bathroom and shower area',
+        why:'A medical event during bathing carries added risks from water, hard surfaces, and reduced ability to call for help',
+        how:'Consider a shower rather than a bath during higher-risk periods, keep the bathroom door unlocked or lockable from outside, and check in periodically during longer bathing routines',
+        measurement:'Recognised safety guidance for seizure-risk and syncope-risk conditions recommends showering over bathing, and avoiding a fully locked door, during periods of higher risk.',
+        example:'A household agrees that during a period of poorly controlled seizures, showers replace baths and the bathroom door stays unlocked.',
+        tip:'Revisit this precaution together as control improves — safety planning can flex as risk genuinely changes, not stay fixed forever.' },
+
+      { id:'cc46', num:'CC46', risk:'high', title:'A Heart-Healthy Home Environment Supports Daily Management',
+        who:'Anyone with a diagnosed heart condition',
+        what:'A home environment that works against, rather than supports, heart-healthy daily habits',
+        where:'Kitchen, activity spaces, and daily routine',
+        why:'Small, consistent environmental supports make heart-healthy daily choices easier to sustain than willpower alone',
+        how:'Stock the kitchen with heart-healthy staples the specialist has recommended, keep a blood pressure monitor accessible if advised, and support a manageable, doctor-approved activity routine at home',
+        measurement:'No numeric standard — follow the specific dietary and activity guidance given by the treating cardiologist or specialist.',
+        example:'A blood pressure monitor kept on a bedside table becomes part of an easy morning routine rather than a forgotten drawer item.',
+        tip:'Involve the whole household in heart-healthy meal choices so the person with the condition doesn\'t feel singled out at every meal.' },
+
+      { id:'cc47', num:'CC47', risk:'medium', title:'Safe Exercise and Activity Considerations Followed',
+        who:'Anyone with a chronic condition affecting safe activity levels',
+        what:'Either avoiding all activity out of caution, or resuming activity without confirming current limits',
+        where:'Wherever physical activity happens',
+        why:'Appropriate activity supports both physical and emotional wellbeing, and the right level is usually more nuanced than "avoid everything" or "no restrictions at all"',
+        how:'Get clear, specific activity guidance from the specialist, including any precautions (such as glucose checks before exercise, or specific heart-rate limits), and revisit it as the condition or age changes',
+        measurement:'No numeric standard — confirm individualised activity guidance with the treating specialist rather than assuming a blanket restriction or no restriction at all.',
+        example:'A cardiologist\'s written note specifies exactly which activities are encouraged and which need a modified approach, rather than a vague "take it easy."',
+        tip:'Revisit activity guidance at every relevant follow-up — a limit set at diagnosis may loosen significantly as management improves.' },
+
+      { id:'cc48', num:'CC48', risk:'medium', title:'Sleep Environment Supports the Specific Condition',
+        who:'Anyone whose condition is affected by sleep quality or timing, such as epilepsy or certain cardiac conditions',
+        what:'A sleep environment or routine that works against known condition-specific needs',
+        where:'Bedroom and evening routine',
+        why:'Sleep deprivation is a recognised trigger for some seizure types, and sleep quality affects overall condition management broadly',
+        how:'Support a consistent sleep routine and environment, and discuss any condition-specific sleep positioning or monitoring recommendations with the specialist',
+        measurement:'No numeric standard — recognised epilepsy care guidance notes sleep deprivation as a common seizure trigger; follow any specific sleep guidance from the specialist.',
+        example:'A consistent bedtime routine is protected even during school holidays, since irregular sleep had previously preceded seizure activity for one family member.',
+        tip:'If a seizure alarm or monitoring device has been recommended, test it periodically to confirm it\'s working correctly.' },
+
+      { id:'cc49', num:'CC49', risk:'medium', title:'General Home Safety Adaptations Match the Household\'s Actual Conditions',
+        who:'Every household managing one or more chronic conditions',
+        what:'Generic home-safety measures applied without considering which adaptations actually matter for the specific conditions present',
+        where:'Household-wide',
+        why:'The most useful home adaptations differ significantly between, for example, a seizure-risk household and a severe-allergy household — a one-size approach wastes effort on the wrong priorities',
+        how:'Review home safety adaptations specifically against each diagnosed condition in the household, rather than applying a generic checklist alone',
+        measurement:'No numeric standard — the goal is condition-specific adaptation rather than a generic approach.',
+        example:'A household with a seizure-risk child prioritises floor-space clearing and bathroom safety, while a household managing severe allergies prioritises kitchen cross-contamination controls instead.',
+        tip:'Revisit this alignment whenever a new condition is diagnosed in the household, since priorities can shift meaningfully.' },
+
+      { id:'cc50', num:'CC50', risk:'medium', title:'Temperature and Comfort Managed for Conditions Sensitive to Extremes',
+        who:'Anyone whose condition is affected by significant heat, cold, or temperature swings',
+        what:'A home environment that allows temperature extremes to go unmanaged for a condition where this matters',
+        where:'Household-wide, particularly bedrooms and main living areas',
+        why:'Some conditions and medications are affected by significant heat or cold, and comfortable, stable temperatures support more predictable daily management',
+        how:'Maintain a comfortable, stable indoor temperature where practical, and ask the specialist whether the specific condition or medication has any temperature-related precautions',
+        measurement:'Recognised general guidance: a comfortable indoor temperature range of roughly 18–24°C (64–75°F); confirm any condition-specific precaution with the specialist.',
+        example:'A household adds simple insulating curtains after learning that significant temperature swings had been worsening one family member\'s symptoms.',
+        tip:'Ask specifically about medication storage during a heatwave or cold snap, since home temperatures can shift more than expected during extreme weather.' },
+
+      { id:'cc51', num:'CC51', risk:'medium', title:'Daily Routine Supports Consistency Where the Condition Benefits From It',
+        who:'Anyone whose condition benefits from routine and predictability, such as diabetes or epilepsy',
+        what:'A chaotic or highly variable daily schedule that works against otherwise well-managed condition control',
+        where:'Household daily routine',
+        why:'Consistent meal timing, medication timing, and sleep supports more stable, predictable condition management for many chronic conditions',
+        how:'Build a realistic daily routine that supports medication timing, meals, and sleep consistency, while allowing enough flexibility for normal family life',
+        measurement:'No numeric standard — recognised chronic-condition guidance generally favours consistent daily timing where the specific condition benefits from it.',
+        example:'A family shifts dinner to a slightly earlier, more consistent time after noticing more stable overnight blood glucose readings as a result.',
+        tip:'Build in some planned flexibility for special occasions, so consistency doesn\'t become a source of stress or exclusion.' },
+
+      { id:'cc52', num:'CC52', risk:'low', title:'Comfortable, Familiar Spaces Available During Recovery From an Episode',
+        who:'Anyone recovering from a seizure, hypoglycaemic episode, or other medical event',
+        what:'No quiet, comfortable space readily available for the person to recover in after an episode',
+        where:'Bedroom or a designated quiet space',
+        why:'A calm, familiar recovery space supports both physical rest and emotional reassurance after a frightening or exhausting episode',
+        how:'Keep a comfortable, quiet space available and ready, and let the person rest there without excessive questioning immediately after an episode',
+        measurement:'No numeric standard — the goal is a genuinely available, comfortable recovery space.',
+        example:'A favourite blanket and a dimmed lamp are kept ready in a child\'s room specifically for the tired, disoriented period after a seizure.',
+        tip:'Ask the person afterwards, once recovered, what actually helped them feel most comfortable — preferences can be surprising and worth remembering.' },
+
+      { id:'cc53', num:'CC53', risk:'low', title:'Household Pets Considered in Relation to the Specific Condition',
+        who:'Households with pets and a chronic condition',
+        what:'Not considering how a pet interacts with a specific condition, whether as a genuine risk or an overlooked benefit',
+        where:'Household-wide',
+        why:'Pets can occasionally be relevant to a chronic condition — either as an allergy consideration or, in some cases, as a recognised support (such as trained alert animals for some conditions)',
+        how:'Discuss any pet-related considerations with the specialist, whether that\'s an allergy assessment or an interest in a trained support animal',
+        measurement:'No numeric standard — discuss pet-related considerations specifically with the treating specialist.',
+        example:'A family confirms with an allergist that a pet is not contributing to a child\'s eczema before considering rehoming it unnecessarily.',
+        tip:'Don\'t assume a pet must go without confirming the connection first — the assumption is sometimes wrong.' },
+
+      { id:'cc54', num:'CC54', risk:'low', title:'Home Adaptations Revisited as the Condition or Person Changes Over Time',
+        who:'Any household managing a long-term chronic condition',
+        what:'Home adaptations set up at diagnosis and never revisited as the condition, treatment, or person\'s age changes',
+        where:'Household-wide',
+        why:'What was needed at diagnosis may no longer match current management, and what wasn\'t needed then may matter more now',
+        how:'Revisit home safety adaptations at meaningful milestones — after a diagnosis change, a significant age transition, or a period of improved or worsening control',
+        measurement:'No numeric standard — recognised guidance suggests reviewing home adaptations at meaningful changes rather than on a fixed schedule alone.',
+        example:'Floor-space precautions set up after an early epilepsy diagnosis are relaxed several years later once seizures have been well-controlled for an extended period, following the neurologist\'s guidance.',
+        tip:'Involve the person themselves in this review as they grow older — their own sense of what helps becomes increasingly relevant.' },
+
+      { id:'cc55', num:'CC55', risk:'low', title:'Emergency Lighting and Power Backup Considered for Essential Equipment',
+        who:'Anyone relying on refrigerated medication or powered medical equipment',
+        what:'No backup plan for a power outage affecting refrigerated medication or essential equipment',
+        where:'Kitchen refrigerator and any powered medical equipment location',
+        why:'A power outage lasting more than a few hours can affect refrigerated medication and any powered equipment the household depends on',
+        how:'Have a cool-bag or cooler plan ready for refrigerated medication during an outage, and know the backup plan for any essential powered equipment',
+        measurement:'No numeric standard — recognised guidance recommends a specific backup plan for any temperature-sensitive medication or essential powered equipment.',
+        example:'A household keeps a cooler and reusable ice packs specifically earmarked for insulin storage during a power outage, checked twice a year.',
+        tip:'Note how long the specific insulin or medication can safely stay unrefrigerated, so an outage doesn\'t become an unnecessary panic.' },
+
+      { id:'cc56', num:'CC56', risk:'low', title:'Household Noise and Sensory Environment Considered Where Relevant',
+        who:'Anyone whose condition or medication affects sensory sensitivity',
+        what:'A generally loud, bright, or overstimulating home environment for someone whose condition or medication increases sensory sensitivity',
+        where:'Shared living spaces',
+        why:'Some conditions and medications can increase sensitivity to noise, light, or overstimulation, and small environmental adjustments can meaningfully improve daily comfort',
+        how:'Ask the person (or notice, for a young child) whether specific sensory adjustments — dimmer lighting, quieter hours, or a low-stimulation retreat space — would help, and make small consistent adjustments where practical',
+        measurement:'No numeric standard — the goal is a household environment reasonably adjusted to any confirmed sensory sensitivity.',
+        example:'A dimmer switch is added to a shared living room after noticing bright overhead lighting seemed to trigger discomfort following a medication change.',
+        tip:'Ask rather than assume — sensory needs vary significantly even among people with the same diagnosis.' }
+    ]
+  },
+  {
+    id: 5, name: 'Records, Communication & Healthcare Coordination', icon: '📋',
+    desc: '14 checks covering keeping a current medical summary, coordinating between healthcare providers, and understanding when to seek urgent versus emergency care.',
+    checks: [
+      { id:'cc57', num:'CC57', risk:'high', title:'An Up-to-Date Medical Summary Kept for Every Condition',
+        who:'Every household member with a chronic condition',
+        what:'No single current document summarising diagnosis, medications, specialists, and action plans in one place',
+        where:'Kept centrally and duplicated digitally',
+        why:'A comprehensive, current summary saves critical time in emergencies and prevents important details being missed between multiple providers',
+        how:'Create one summary document per person covering diagnosis, current medications, specialists, allergies, and action plans, and update it after every relevant appointment',
+        measurement:'Recognised chronic-condition care guidance recommends updating the medical summary after every appointment or significant change, and at minimum annually.',
+        example:'A single shared document lists a child\'s epilepsy diagnosis, current medication, neurologist contact details, and the seizure action plan, updated after every check-up.',
+        tip:'Keep both a printed and digital copy, since either format might be unavailable at the moment it\'s needed.' },
+
+      { id:'cc58', num:'CC58', risk:'high', title:'Coordination Maintained Between Multiple Healthcare Providers',
+        who:'Anyone seeing more than one specialist or provider for their condition',
+        what:'Different providers unaware of each other\'s involvement, treatment changes, or recent results',
+        where:'Across all providers involved in care',
+        why:'Fragmented care between providers can lead to conflicting advice, missed interactions, or repeated tests',
+        how:'Ask each provider to send updates to the primary doctor, keep a running list of all providers involved, and mention other active treatments at every appointment',
+        measurement:'No numeric standard — recognised guidance recommends actively coordinating information between all treating providers rather than assuming they communicate automatically.',
+        example:'A parent specifically asks the cardiologist\'s office to send a copy of results to the family\'s regular doctor, rather than assuming it happens by default.',
+        tip:'Keep a simple list of every provider\'s name, specialty, and last visit date so nothing is forgotten between appointments.' },
+
+      { id:'cc59', num:'CC59', risk:'high', title:'Monitoring Logs Kept Consistently and Brought to Appointments',
+        who:'Anyone managing a condition requiring regular monitoring, such as blood glucose, seizures, or blood pressure',
+        what:'Monitoring data scattered across memory, loose notes, or a device that\'s rarely reviewed',
+        where:'A consistent logging method, digital or paper',
+        why:'Consistent logs reveal patterns a single appointment recall cannot, and support more informed treatment decisions',
+        how:'Log readings or events consistently in one place, and bring the log (or ensure digital access) to every relevant appointment',
+        measurement:'Recognised diabetes/epilepsy/cardiac care guidance recommends consistent monitoring logs reviewed regularly with the care team.',
+        example:'A shared glucose-monitoring app automatically logs readings and generates a simple report the family prints before each diabetes clinic visit.',
+        tip:'Note anything unusual alongside a reading or event — a missed meal, unusual activity, or poor sleep — since context often explains a pattern.' },
+
+      { id:'cc60', num:'CC60', risk:'high', title:'Understanding When to Seek Routine, Urgent, or Emergency Care',
+        who:'Every caregiver managing a chronic condition',
+        what:'Uncertainty about which level of care a given symptom needs, leading to either unnecessary emergency visits or dangerous delay',
+        where:'Wherever a symptom or concern arises',
+        why:'Clear, condition-specific guidance on care urgency prevents both dangerous under-reaction and unnecessary over-reaction',
+        how:'Ask the specialist to define specific examples of routine, urgent, and emergency situations for each condition, and keep this guidance with the action plan',
+        measurement:'No numeric standard — confirm specific urgency thresholds for each condition directly with the treating specialist.',
+        example:'A written guide notes "mild cold with stable glucose = routine call; glucose consistently very high with vomiting = urgent same-day care; unresponsive or seizure over 5 minutes = emergency services" for one family\'s reference.',
+        tip:'When genuinely unsure, a phone call to the care team\'s advice line is rarely the wrong first step.' },
+
+      { id:'cc61', num:'CC61', risk:'medium', title:'Prescription and Care Continuity Planned Ahead of Gaps',
+        who:'Anyone relying on ongoing prescriptions or regular specialist care',
+        what:'A gap in prescription continuity or specialist access due to unplanned circumstances, such as moving, changing providers, or coverage changes',
+        where:'Wherever prescriptions and specialist care are arranged',
+        why:'An unplanned gap in essential medication or specialist follow-up can meaningfully affect condition control',
+        how:'Plan ahead for any known transition — a house move, a change in coverage, or a specialist leaving practice — by requesting records transfer and confirming continuity before the gap occurs',
+        measurement:'No numeric standard — recognised guidance recommends proactively arranging continuity before any known transition, rather than reacting after a gap occurs.',
+        example:'A family requests a full records transfer to a new specialist several weeks before an upcoming house move, rather than starting the search only after arriving.',
+        tip:'Ask the outgoing provider directly what they recommend for a smooth handover — most have done this many times before.' },
+
+      { id:'cc62', num:'CC62', risk:'medium', title:'Advocating Confidently for the Person With the Condition in Medical Settings',
+        who:'Any caregiver or the person themselves in a medical appointment or emergency setting',
+        what:'Deferring to a rushed assessment without sharing relevant history, or hesitating to ask for clarification',
+        where:'Any medical appointment, clinic, or emergency setting',
+        why:'Caregivers and patients often know the person\'s patterns and history in a way a single appointment cannot capture, and speaking up supports better care',
+        how:'Prepare specific questions and relevant history before appointments, and don\'t hesitate to ask for clarification or a second opinion when something feels unclear or off',
+        measurement:'No numeric standard — recognised patient-advocacy guidance encourages bringing written questions and history to every appointment.',
+        example:'A parent brings a written list of three specific questions to every neurology appointment, ensuring none are forgotten in the limited appointment time.',
+        tip:'Write questions down as they come up between appointments, rather than trying to remember them all at once beforehand.' },
+
+      { id:'cc63', num:'CC63', risk:'medium', title:'Appointment Schedule Tracked and Followed Through',
+        who:'Every household managing ongoing specialist or monitoring appointments',
+        what:'Follow-up appointments missed or delayed due to a busy schedule or the person feeling generally well',
+        where:'Household calendar and reminder system',
+        why:'Regular follow-up, even when things seem stable, catches changes early and keeps treatment plans current',
+        how:'Track all upcoming and recommended appointments on a shared household calendar, and book the next follow-up before leaving the current one where possible',
+        measurement:'No numeric standard — recognised chronic-condition care guidance recommends keeping every scheduled and recommended follow-up appointment.',
+        example:'A family books the next diabetes clinic appointment at the front desk immediately after the current one, rather than waiting for a reminder months later.',
+        tip:'Set a reminder a week before any appointment to prepare questions and gather recent monitoring logs.' },
+
+      { id:'cc64', num:'CC64', risk:'medium', title:'Records Kept Accessible if the Usual Caregiver Is Unavailable',
+        who:'Every household managing a chronic condition with one primary caregiver',
+        what:'Medical records, provider contacts, and history known only to the primary caregiver',
+        where:'Wherever medical records and provider details are stored',
+        why:'A backup caregiver stepping in during an emergency or absence needs the same access the primary caregiver has',
+        how:'Share access to digital medical records and provider contact details with at least one backup adult, and keep printed copies where they\'d actually be found',
+        measurement:'No numeric standard — the goal is at least one backup adult with genuine access to medical records and provider contacts.',
+        example:'A shared family document with login details for the online patient portal ensures a grandparent stepping in during a parent\'s business trip has real access, not just goodwill.',
+        tip:'Test the backup access occasionally, the same way you\'d test a smoke alarm — good intentions aren\'t the same as working access.' },
+
+      { id:'cc65', num:'CC65', risk:'medium', title:'Insurance or Prescription Continuity Considerations Understood in Advance',
+        who:'Every household managing ongoing medication or specialist care',
+        what:'Unexpected disruption to prescription continuity or coverage discovered only at the point of need',
+        where:'Wherever coverage and prescription arrangements are managed',
+        why:'Understanding coverage and continuity requirements in advance prevents a stressful surprise exactly when medication or care is needed',
+        how:'Understand the household\'s specific coverage and prescription-renewal requirements well before they become urgent, and keep relevant reference numbers and contacts easily accessible',
+        measurement:'No numeric standard — the goal is understanding coverage and continuity requirements before they become urgent, specific to the household\'s own arrangements.',
+        example:'A family reviews their prescription renewal requirements each year at the same time, rather than discovering a lapsed authorisation at the pharmacy counter.',
+        tip:'Keep a note of any renewal or authorisation deadlines on the household calendar well ahead of the actual date.' },
+
+      { id:'cc66', num:'CC66', risk:'medium', title:'Second Opinions Sought When a Diagnosis or Plan Feels Uncertain',
+        who:'Anyone managing a complex or unclear chronic condition diagnosis or treatment plan',
+        what:'Proceeding with an uncertain plan without seeking a second opinion, out of politeness or uncertainty about whether it\'s appropriate to ask',
+        where:'Any point of significant diagnostic or treatment uncertainty',
+        why:'A second opinion is a normal, reasonable part of managing a complex condition and can provide valuable clarity or reassurance',
+        how:'Ask directly for a second opinion or referral when a diagnosis or plan feels unclear, incomplete, or doesn\'t match observed patterns at home',
+        measurement:'No numeric standard — recognised patient-advocacy guidance affirms a second opinion is a reasonable and normal request in complex or uncertain cases.',
+        example:'A family requests a second neurology opinion after a seizure pattern doesn\'t seem to match the current diagnosis, leading to a helpful adjustment in the treatment plan.',
+        tip:'Frame the request plainly and without apology — "we\'d like a second opinion to be sure" is a completely reasonable thing to say.' },
+
+      { id:'cc67', num:'CC67', risk:'low', title:'Digital Health Records and Apps Kept Backed Up and Accessible',
+        who:'Any household using apps or digital tools to track condition management',
+        what:'Relying entirely on a single device or app for critical monitoring data, with no backup if the device is lost or fails',
+        where:'Digital monitoring tools and devices',
+        why:'A lost or broken device shouldn\'t mean losing months of monitoring history that supports ongoing care decisions',
+        how:'Regularly back up or export monitoring data from apps and devices, and know how to access the same information from a second device if needed',
+        measurement:'No numeric standard — the goal is monitoring data that survives the loss of any single device.',
+        example:'A glucose-monitoring app\'s data automatically syncs to a cloud account, so a lost phone doesn\'t erase months of useful history.',
+        tip:'Check the backup or sync setting actually works by testing it on a second device occasionally, rather than assuming it\'s working.' },
+
+      { id:'cc68', num:'CC68', risk:'low', title:'Family Health History Documented for Future Reference',
+        who:'Every household managing an inherited or family-pattern chronic condition',
+        what:'Family health history known informally but not documented anywhere accessible',
+        where:'The medical summary or family records',
+        why:'Family health history can be genuinely relevant to a new diagnosis or a specialist\'s assessment, and informal memory fades or gets lost between generations',
+        how:'Document known family health history in the medical summary, and update it as new relevant information becomes known',
+        measurement:'No numeric standard — the goal is a documented, reasonably current family health history available for medical reference.',
+        example:'A note added to a child\'s medical summary about a grandparent\'s early heart condition helps a cardiologist interpret an unusual test result years later.',
+        tip:'Ask older relatives directly about family health history while the opportunity is there — this information becomes much harder to gather later.' },
+
+      { id:'cc69', num:'CC69', risk:'low', title:'Language or Communication Support Arranged Where Needed',
+        who:'Any household member who would benefit from language interpretation or communication support in medical settings',
+        what:'A language or communication barrier reducing the quality of information exchanged during appointments or emergencies',
+        where:'Any medical appointment or emergency setting',
+        why:'Full, accurate communication in medical settings is essential, and support should be arranged in advance rather than improvised under pressure',
+        how:'Request interpretation or communication support in advance for appointments, and note the need clearly on the medical summary for emergency responders',
+        measurement:'No numeric standard — recognised patient-care guidance supports arranging appropriate communication assistance ahead of medical appointments where needed.',
+        example:'A family requests an interpreter for every specialist appointment in advance, ensuring nothing is lost in translation during complex treatment discussions.',
+        tip:'Note any communication support needs clearly on the emergency action plan too, not just for routine appointments.' },
+
+      { id:'cc70', num:'CC70', risk:'low', title:'Milestone Transitions in Care Planned Ahead of Time',
+        who:'Anyone approaching a transition such as moving from paediatric to adult care, or a significant life change',
+        what:'A care transition arriving without preparation, leaving a gap in continuity or understanding',
+        where:'Wherever the transition occurs',
+        why:'Planned transitions — such as paediatric to adult care — are recognised as a period of higher risk for disengagement from ongoing management',
+        how:'Discuss upcoming care transitions with the current specialist well in advance, and involve the person themselves increasingly in their own care as the transition approaches',
+        measurement:'Recognised chronic-condition care guidance highlights paediatric-to-adult care transition as a period requiring deliberate planning to avoid a gap in engagement.',
+        example:'A neurologist begins involving a teenager directly in appointment discussions a couple of years before an eventual transition to adult care, building independence gradually.',
+        tip:'Start the conversation about transition earlier than feels necessary — a gradual handover works better than an abrupt one.' }
+    ]
+  },
+  {
+    id: 6, name: 'Family, School/Work & Caregiver Preparedness', icon: '🤝',
+    desc: '14 checks covering briefing school, work and carers, a portable emergency kit for outings, caregiver self-care, and building confidence in living well with a chronic condition.',
+    checks: [
+      { id:'cc71', num:'CC71', risk:'high', title:'School or Workplace Fully Briefed on the Condition and Action Plan',
+        who:'Any student or employee managing a chronic condition',
+        what:'A school or workplace aware of a diagnosis in general terms but not equipped with the specific action plan or supplies needed to respond',
+        where:'School, workplace, or any regular structured setting',
+        why:'A brief, general mention isn\'t the same as genuine preparedness — staff need the written plan, contact details, and any necessary supplies on-site',
+        how:'Provide a written action plan, emergency contacts, and any necessary rescue medication directly to the school nurse, designated first-aider, or workplace contact, and confirm receipt',
+        measurement:'No numeric standard — the goal is confirmed, written communication of the action plan to a designated responsible contact, not general awareness alone.',
+        example:'A school nurse\'s office keeps a folder with the written seizure action plan, emergency contacts, and a spare dose of rescue medication, refreshed at the start of each school year.',
+        tip:'Follow up in person or by phone to confirm the plan was actually received and understood, not just delivered.' },
+
+      { id:'cc72', num:'CC72', risk:'high', title:'A Portable Emergency Kit Ready for Every Outing',
+        who:'Anyone with a chronic condition requiring rescue medication, monitoring supplies, or emergency information away from home',
+        what:'Assembling emergency supplies at the last minute before leaving, risking something forgotten',
+        where:'Ready near the door or in a designated bag',
+        why:'A pre-packed kit removes the risk of a forgotten essential during a rushed departure, when mistakes are most likely',
+        how:'Keep a dedicated, pre-packed emergency kit with rescue medication, monitoring supplies, and the written action plan, ready to grab for any outing',
+        measurement:'Recognised guidance recommends checking portable emergency kit contents and expiry dates at least monthly, and immediately after any use.',
+        example:'A pre-packed bag by the front door contains a spare epinephrine auto-injector, glucose tablets, and a laminated action plan, checked on the first of every month.',
+        tip:'Replace anything used or expired the same day, not "when I get a chance" — an incomplete kit found empty in an emergency defeats its purpose.' },
+
+      { id:'cc73', num:'CC73', risk:'high', title:'Travel Plans Account for the Specific Condition\'s Needs',
+        who:'Any household travelling with a member managing a chronic condition',
+        what:'Travel planned without considering medication supply, time zone medication timing, refrigeration, or access to care while away',
+        where:'Any travel away from the usual home and healthcare setup',
+        why:'Travel introduces genuine complications — time zone changes affecting dosing schedules, unfamiliar emergency services, and limited access to the usual care team',
+        how:'Plan medication supply and timing in advance for time zone changes, research emergency care options at the destination, and carry a written summary of the condition and current treatment',
+        measurement:'Recognised travel-health guidance recommends carrying extra medication supply, a written medical summary, and researching care options at the destination before travelling.',
+        example:'A family researches the nearest hospital and confirms travel insurance covers their specific pre-existing condition before booking a trip involving air travel and a significant time zone change.',
+        tip:'Ask the specialist specifically about adjusting medication timing across time zones — the right approach varies by medication and condition.' },
+
+      { id:'cc74', num:'CC74', risk:'medium', title:'Siblings and Other Family Members Given Age-Appropriate Understanding',
+        who:'Siblings and other close family members of the person with the condition',
+        what:'Siblings left with vague or frightening impressions of the condition, without an honest, age-appropriate explanation',
+        where:'Household-wide, particularly among children',
+        why:'An honest, calm, age-appropriate explanation reduces fear and resentment, and helps siblings feel included rather than confused bystanders',
+        how:'Explain the condition honestly at a level the sibling can understand, involve them in appropriate ways (such as knowing where the epinephrine is kept), and make space for their own feelings about it',
+        measurement:'No numeric standard — recognised family-support guidance for chronic illness in the household recommends honest, age-appropriate communication with siblings.',
+        example:'A school-age sibling is shown, calmly and without alarm, exactly what a seizure looks like and what to do, rather than being left frightened by an unexplained event they witnessed.',
+        tip:'Check in with siblings periodically about how they\'re feeling about it, not just once when the diagnosis was new.' },
+
+      { id:'cc75', num:'CC75', risk:'medium', title:'Caregiver Rest and Self-Care Treated as a Genuine Safety Measure',
+        who:'The primary caregiver managing a chronic condition day to day',
+        what:'Ongoing caregiver exhaustion dismissed as an inevitable cost, rather than recognised as a genuine safety risk',
+        where:'Household-wide',
+        why:'An exhausted caregiver is more likely to miss a warning sign, make a dosing error, or respond more slowly in an emergency — caregiver wellbeing is directly connected to the safety of the person they care for',
+        how:'Build in genuine rest and respite, ask for and accept help from others, and treat caregiver burnout as something to actively prevent rather than push through',
+        measurement:'No numeric standard — recognised caregiver-support guidance treats caregiver rest as a component of overall household safety, not a separate concern.',
+        example:'A backup caregiver takes one evening a week so the primary caregiver can rest fully, rather than remaining on call every single night.',
+        tip:'Notice early signs of caregiver burnout — persistent exhaustion, irritability, or dread — and treat them as a signal to seek support, not a personal failing.' },
+
+      { id:'cc76', num:'CC76', risk:'medium', title:'A Support Network Built Beyond the Immediate Household',
+        who:'Every family managing a chronic condition',
+        what:'Relying entirely on one or two people, with no wider support network to draw on',
+        where:'Beyond the immediate household',
+        why:'A wider support network — extended family, other parents managing similar conditions, community or online groups — provides both practical backup and emotional support',
+        how:'Connect with condition-specific support groups, build relationships with other families managing similar conditions, and identify at least one additional trusted adult who could step in if needed',
+        measurement:'No numeric standard — recognised chronic-condition care guidance encourages building a support network beyond the immediate household.',
+        example:'Connecting with a local parents\' group for families managing childhood epilepsy provides both practical tips and reassurance that isn\'t available from medical appointments alone.',
+        tip:'Reach out before a crisis, not just during one — relationships built in calmer times are easier to lean on later.' },
+
+      { id:'cc77', num:'CC77', risk:'medium', title:'The Condition Normalised Without Minimising Its Real Risks',
+        who:'Every household managing a chronic condition',
+        what:'Either treating the condition as a constant crisis, or swinging too far the other way and downplaying genuine risks',
+        where:'Household-wide, in everyday conversation and behaviour',
+        why:'A balanced, matter-of-fact approach supports the person\'s confidence and independence while keeping genuine precautions firmly in place',
+        how:'Speak about the condition matter-of-factly in daily life, maintain the necessary precautions consistently, and avoid both dramatic alarm and casual dismissal',
+        measurement:'No numeric standard — recognised chronic-condition family guidance supports a balanced approach: normalised daily life alongside consistently maintained safety measures.',
+        example:'A family discusses insulin dosing at the dinner table as routinely as discussing homework, while still never skipping the safety steps that protect against a low.',
+        tip:'Notice your own tone when discussing the condition — children in particular absorb the emotional framing as much as the words.' },
+
+      { id:'cc78', num:'CC78', risk:'medium', title:'The Person With the Condition Included in Their Own Care Planning',
+        who:'The person managing the chronic condition, at an age-appropriate level',
+        what:'Decisions made entirely on the person\'s behalf, without involving them as they become capable of participating',
+        where:'Medical appointments and daily management decisions',
+        why:'Involvement in one\'s own care builds confidence, independence, and better long-term self-management, and this should increase gradually with age and capability',
+        how:'Involve the person increasingly in decisions and daily management as they grow or as capability allows, rather than making every decision entirely for them indefinitely',
+        measurement:'No numeric standard — recognised chronic-condition guidance supports gradually increasing patient involvement in their own care as age and capability allow.',
+        example:'A ten-year-old is taught to check their own blood glucose under supervision, building steadily towards independent management over the following years.',
+        tip:'Involvement should build gradually and match genuine readiness — rushing independence before it\'s safe helps no one.' },
+
+      { id:'cc79', num:'CC79', risk:'medium', title:'Confidence-Building Activities Encouraged Alongside Safety Precautions',
+        who:'Anyone with a chronic condition, particularly children and teenagers',
+        what:'Safety precautions overshadowing normal activities, achievements, and independence that could otherwise be safely supported',
+        where:'School, activities, and everyday life',
+        why:'Living well with a chronic condition includes ordinary participation in activities, not just careful avoidance of risk',
+        how:'Work with the specialist and school or activity providers to find safe ways to include the person in activities they want to pursue, rather than defaulting to exclusion',
+        measurement:'No numeric standard — recognised chronic-condition guidance supports finding safe accommodations for normal activity participation rather than default exclusion.',
+        example:'A child with well-controlled epilepsy participates in a school swimming programme with a simple, agreed supervision adjustment, rather than being excluded outright.',
+        tip:'Ask "how can we make this safe" before assuming "we can\'t do this" — the answer is often more flexible than expected.' },
+
+      { id:'cc80', num:'CC80', risk:'low', title:'Family Milestones and Achievements Celebrated Alongside Management Routines',
+        who:'Every family managing a chronic condition',
+        what:'Daily management routines dominating family life to the point that ordinary milestones go unmarked',
+        where:'Household-wide',
+        why:'A chronic condition is one part of family life, not the whole of it, and celebrating ordinary milestones supports everyone\'s sense of normal family identity',
+        how:'Continue marking birthdays, achievements, and ordinary family milestones fully, working management routines around them rather than letting routines eclipse them',
+        measurement:'No numeric standard — the goal is maintaining ordinary family celebration and identity alongside condition management.',
+        example:'A birthday cake is adapted to be allergy-safe rather than skipped altogether, keeping the celebration fully intact.',
+        tip:'Plan the practical management details of a celebration slightly ahead of time, so the day itself can be about the celebration, not logistics.' },
+
+      { id:'cc81', num:'CC81', risk:'low', title:'Respite Care Options Identified Before They\'re Urgently Needed',
+        who:'The primary caregiver and household',
+        what:'No identified respite care option, discovered only to be needed during a moment of genuine caregiver exhaustion',
+        where:'Beyond the immediate household',
+        why:'Identifying respite options calmly in advance means help is available before exhaustion becomes a crisis',
+        how:'Research and identify at least one trusted respite option — a trained relative, a respite care service, or a trusted friend — before it\'s urgently needed',
+        measurement:'No numeric standard — recognised caregiver-support guidance recommends identifying respite options proactively rather than reactively.',
+        example:'A trusted aunt is trained on the full care routine well before she\'s ever actually needed to step in for a weekend.',
+        tip:'Have the respite conversation during a calm period — it\'s a much easier conversation to have before exhaustion sets in.' },
+
+      { id:'cc82', num:'CC82', risk:'low', title:'The Whole Household Reflects Together on What\'s Working',
+        who:'Every household managing a chronic condition',
+        what:'Routines and plans set once and never revisited as a family, even as circumstances change',
+        where:'Household-wide',
+        why:'A periodic honest check-in on what\'s working and what isn\'t keeps the household\'s approach realistic and sustainable over time',
+        how:'Set a periodic, low-pressure time to reflect together as a household on the current routines, plans, and support in place, and adjust anything that isn\'t working well',
+        measurement:'No numeric standard — recognised family-management guidance suggests periodic review of household routines and support arrangements.',
+        example:'A family sets a simple habit of a brief check-in every few months about how the current routine is working, adjusting the medication schedule slightly after noticing it clashes with a new school timetable.',
+        tip:'Ask specifically what\'s difficult right now, not just what\'s going well — the honest answer is more useful for planning.' },
+
+      { id:'cc83', num:'CC83', risk:'low', title:'New Caregivers or Sitters Given a Genuine, Practical Handover',
+        who:'Any new babysitter, relief carer, or occasional sitter',
+        what:'A rushed, incomplete handover that leaves a new sitter under-prepared for a genuine situation',
+        where:'Wherever a new or occasional caregiver takes over',
+        why:'A thorough, practical handover — not just a verbal summary — genuinely prepares a new sitter to respond correctly if needed',
+        how:'Walk any new sitter through the written action plan, supply locations, and emergency contacts in person, and confirm their understanding before leaving them in charge',
+        measurement:'No numeric standard — the goal is a confirmed, practical handover for every new or occasional caregiver, not a rushed verbal mention.',
+        example:'A new sitter is shown, in person, exactly where the epinephrine auto-injector is kept and asked to repeat back the key steps before the parents leave for the evening.',
+        tip:'Keep a simple one-page summary specifically for occasional sitters, shorter than the full action plan but covering the essentials.' },
+
+      { id:'cc84', num:'CC84', risk:'low', title:'The Household Recognises Living Well, Not Just Managing Symptoms, as the Goal',
+        who:'Every family managing a chronic condition',
+        what:'A household focus so entirely on management tasks that the broader goal of a full, confident daily life gets lost',
+        where:'Household-wide, in everyday attitude and conversation',
+        why:'A chronic condition is a genuine daily management task, not a defining tragedy — the ultimate goal of good management is a confident, full life alongside it, not just symptom control',
+        how:'Keep the household\'s language and daily focus oriented towards living well and confidently, using the safety systems in this checklist as the steady foundation that makes that possible, not as the whole story',
+        measurement:'No numeric standard — the guiding principle is that consistent, calm management supports a full and confident daily life.',
+        example:'A family reflects, a year after diagnosis, that the routines they once found overwhelming have simply become part of normal daily life, freeing up energy for everything else that matters.',
+        tip:'Revisit this checklist periodically not from fear, but as routine maintenance — the same way a car gets serviced, not because something is wrong, but to keep things running well.' }
+    ]
+  }
+];
+
+const STORE_KEY = 'safelife-chronic-pro';
+const completed = new Set();
+let lang = 'en', theme = 'chronic', mode = 'light', riskFilter = null, activeZone = 1;
+const TOTAL = 84;
+
+function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
+function persist(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({completed:[...completed], lang, theme, mode})); }catch(e){}
+}
+function restore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    (d.completed||[]).forEach(id=>completed.add(id));
+    if(false && d.lang && I18N[d.lang]) lang = d.lang; /* language switching disabled for English-only release — remove "false &&" to re-enable */
+    if(d.theme) theme = d.theme;
+    if(d.mode) mode = d.mode;
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════
+// PROGRESS & STATS
+// ═══════════════════════════════════════════
+function updateProgress(){
+  const done = completed.size;
+  document.getElementById('topbar-done').textContent = done;
+  document.getElementById('progress-count').textContent = done + ' ' + t('ofWord') + ' ' + TOTAL;
+  document.getElementById('progress-fill').style.width = (done/TOTAL*100) + '%';
+  ZONES.forEach(z=>{
+    const zDone = z.checks.filter(c=>completed.has(c.id)).length;
+    document.getElementById('ztc-'+z.id).textContent = zDone + '/14';
+  });
+  document.getElementById('celebrate').classList.toggle('show', done === TOTAL);
+  persist();
+}
+function fillStats(){
+  const counts = {critical:0,high:0,medium:0,low:0};
+  ZONES.forEach(z=>z.checks.forEach(c=>counts[c.risk]++));
+  ['critical','high','medium','low'].forEach(r=>{ document.getElementById('s-'+r).textContent = counts[r]; });
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function buildCard(check){
+  const card = document.createElement('div');
+  card.className = 'check-card' + (completed.has(check.id) ? ' completed' : '');
+  card.dataset.id = check.id;
+  card.dataset.risk = check.risk;
+  card.innerHTML =
+    '<div class="check-header">' +
+      '<div class="check-checkbox">' + (completed.has(check.id) ? '✓' : '') + '</div>' +
+      '<div class="check-num">' + check.num + '</div>' +
+      '<div class="check-risk risk-' + check.risk + '">' + t(check.risk) + '</div>' +
+      '<div class="check-title">' + check.title + '</div>' +
+      '<div class="check-chevron">▼</div>' +
+    '</div>' +
+    '<div class="check-detail">' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item"><div class="detail-label"><span>👤</span>' + t('who') + '</div><div class="detail-value">' + check.who + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>⚠️</span>' + t('what') + '</div><div class="detail-value">' + check.what + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>📍</span>' + t('where') + '</div><div class="detail-value">' + check.where + '</div></div>' +
+        '<div class="detail-item"><div class="detail-label"><span>❓</span>' + t('why') + '</div><div class="detail-value">' + check.why + '</div></div>' +
+        '<div class="detail-item full"><div class="detail-label"><span>🔧</span>' + t('how') + '</div><div class="detail-value">' + check.how + '</div></div>' +
+      '</div>' +
+      '<div class="measurement-box"><strong>📏 ' + t('standards') + '</strong>' + check.measurement + '</div>' +
+      '<div class="detail-item full" style="margin-top:10px;"><div class="detail-label"><span>💬</span>' + t('example') + '</div><div class="detail-value">' + check.example + '</div></div>' +
+      '<div class="tip-box"><span class="tip-icon">💡</span><span class="tip-text"><strong>' + t('quickTip') + ':</strong> ' + check.tip + '</span></div>' +
+    '</div>';
+  card.querySelector('.check-header').addEventListener('click', function(){ card.classList.toggle('open'); });
+  card.querySelector('.check-checkbox').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(completed.has(check.id)){ completed.delete(check.id); card.classList.remove('completed'); this.textContent=''; }
+    else { completed.add(check.id); card.classList.add('completed'); this.textContent='✓'; }
+    updateProgress();
+  });
+  return card;
+}
+
+function renderAll(){
+  document.querySelectorAll('.zone-panel').forEach(p=>p.remove());
+  const main = document.getElementById('main-content');
+  ZONES.forEach(z=>{
+    const panel = document.createElement('div');
+    panel.className = 'zone-panel' + (z.id === activeZone ? ' active' : '');
+    panel.id = 'zone-panel-' + z.id;
+    const header = document.createElement('div');
+    header.className = 'zone-header';
+    header.innerHTML = '<div class="zone-icon">' + (ICONS['z'+z.id] || z.icon) + '</div><div class="zone-header-text"><h2>' + t('z'+z.id) + '</h2><p>' + t('zd'+z.id) + '</p></div>';
+    panel.appendChild(header);
+    const actions = document.createElement('div');
+    actions.className = 'zone-actions';
+    const bExpand = document.createElement('button'); bExpand.className='btn btn-outline'; bExpand.textContent=t('expandAll');
+    const bCollapse = document.createElement('button'); bCollapse.className='btn btn-outline'; bCollapse.textContent=t('collapseAll');
+    const bUnmark = document.createElement('button'); bUnmark.className='btn btn-outline'; bUnmark.textContent=t('unmarkAll');
+    const bMark = document.createElement('button'); bMark.className='btn btn-primary'; bMark.textContent=t('markAll');
+    actions.append(bExpand,bCollapse,bUnmark,bMark);
+    panel.appendChild(actions);
+    const list = document.createElement('div');
+    list.className = 'checks-list';
+    z.checks.forEach(c=>list.appendChild(buildCard(c)));
+    panel.appendChild(list);
+    const disc = document.createElement('div');
+    disc.className = 'zone-disclaimer';
+    disc.textContent = '⚕ ' + t('disclaimer');
+    panel.appendChild(disc);
+    bExpand.addEventListener('click', ()=>list.querySelectorAll('.check-card').forEach(c=>c.classList.add('open')));
+    bCollapse.addEventListener('click', ()=>list.querySelectorAll('.check-card').forEach(c=>c.classList.remove('open')));
+    bMark.addEventListener('click', ()=>{ z.checks.forEach(c=>completed.add(c.id)); refreshCards(list); });
+    bUnmark.addEventListener('click', ()=>{ z.checks.forEach(c=>completed.delete(c.id)); refreshCards(list); });
+    main.appendChild(panel);
+  });
+  applyFilters();
+  updateProgress();
+}
+function refreshCards(list){
+  list.querySelectorAll('.check-card').forEach(card=>{
+    const done = completed.has(card.dataset.id);
+    card.classList.toggle('completed', done);
+    card.querySelector('.check-checkbox').textContent = done ? '✓' : '';
+  });
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════
+// ZONES / SEARCH / FILTERS
+// ═══════════════════════════════════════════
+function switchZone(id){
+  activeZone = id;
+  document.querySelectorAll('.zone-tab').forEach(tab=>tab.classList.toggle('active', +tab.dataset.zone === id));
+  document.querySelectorAll('.zone-panel').forEach(p=>p.classList.toggle('active', p.id === 'zone-panel-' + id));
+}
+document.querySelectorAll('.zone-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{ document.getElementById('search-input').value=''; applyFilters(); switchZone(+tab.dataset.zone); });
+});
+document.querySelectorAll('.hero-badge[data-zone]').forEach(badge=>{
+  badge.addEventListener('click', ()=>{
+    switchZone(+badge.dataset.zone);
+    document.getElementById('zone-tabs').scrollIntoView({behavior:'smooth'});
+  });
+});
+document.querySelectorAll('.stat-pill[data-risk]').forEach(pill=>{
+  pill.addEventListener('click', ()=>{
+    riskFilter = (riskFilter === pill.dataset.risk) ? null : pill.dataset.risk;
+    document.querySelectorAll('.stat-pill[data-risk]').forEach(p=>p.classList.toggle('filter-on', p.dataset.risk === riskFilter));
+    applyFilters();
+  });
+});
+document.getElementById('search-input').addEventListener('input', applyFilters);
+
+function applyFilters(){
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const searching = q.length > 0;
+  let anyVisible = false;
+  ZONES.forEach(z=>{
+    const panel = document.getElementById('zone-panel-' + z.id);
+    if(!panel) return;
+    let zoneVisible = 0;
+    panel.querySelectorAll('.check-card').forEach(card=>{
+      const check = z.checks.find(c=>c.id === card.dataset.id);
+      const text = (check.title+' '+check.who+' '+check.what+' '+check.where+' '+check.why+' '+check.how+' '+check.measurement+' '+check.example+' '+check.tip).toLowerCase();
+      const matchQ = !searching || text.includes(q);
+      const matchR = !riskFilter || check.risk === riskFilter;
+      const show = matchQ && matchR;
+      card.style.display = show ? '' : 'none';
+      if(show) zoneVisible++;
+    });
+    if(searching || riskFilter){
+      panel.classList.toggle('active', zoneVisible > 0);
+      panel.querySelector('.zone-actions').style.display = 'none';
+    } else {
+      panel.classList.toggle('active', z.id === activeZone);
+      panel.querySelector('.zone-actions').style.display = '';
+    }
+    if(zoneVisible > 0) anyVisible = true;
+  });
+  document.getElementById('search-no-results').style.display = (searching || riskFilter) && !anyVisible ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════
+// THEMES / MODE / LANGUAGE
+// ═══════════════════════════════════════════
+const THEMES = [
+  {id:'chronic', name:'Wine Calm',    c:'#7A3B46'},
+  {id:'teal',   name:'Teal Calm',     c:'#14B8A6'},
+  {id:'amber',  name:'Warm Amber',    c:'#F59E0B'},
+  {id:'rose',   name:'Rose Care',     c:'#E11D48'},
+  {id:'violet', name:'Gentle Violet', c:'#7C3AED'},
+  {id:'ocean',  name:'Ocean Blue',    c:'#2563EB'},
+  {id:'forest', name:'Forest Green',  c:'#16A34A'}
+];
+function buildThemeMenu(){
+  const dd = document.getElementById('dd-theme');
+  dd.innerHTML = '<div class="dropdown-title">' + t('theme') + '</div>';
+  THEMES.forEach(th=>{
+    const row = document.createElement('button');
+    row.className = 'theme-row' + (th.id === theme ? ' selected' : '');
+    row.innerHTML = '<span class="theme-swatch" style="background:' + th.c + '"></span>' + th.name + (th.id === theme ? '<span class="check-mark">✓</span>' : '');
+    row.addEventListener('click', e=>{
+      e.stopPropagation();
+      theme = th.id;
+      document.body.dataset.theme = theme;
+      buildThemeMenu(); persist();
+    });
+    dd.appendChild(row);
+  });
+}
+function buildLangMenu(){
+  const dd = document.getElementById('dd-lang');
+  dd.innerHTML = '<div class="dropdown-title">🌐 Language</div>';
+  Object.keys(I18N).forEach(code=>{
+    const row = document.createElement('button');
+    row.className = 'theme-row' + (code === lang ? ' selected' : '');
+    row.innerHTML = '<span style="font-weight:800;font-size:11px;color:var(--accent);min-width:22px;">' + code.toUpperCase() + '</span>' + I18N[code].name + (code === lang ? '<span class="check-mark">✓</span>' : '');
+    row.addEventListener('click', e=>{
+      e.stopPropagation();
+      lang = code;
+      applyLang(); renderAll(); buildLangMenu(); buildManual(); buildCheat(); buildCollection(); persist();
+    });
+    dd.appendChild(row);
+  });
+  const note = document.createElement('div');
+  note.style.cssText = 'font-size:10.5px;color:var(--ink-soft);padding:8px;max-width:230px;line-height:1.4;';
+  note.textContent = t('langNote');
+  dd.appendChild(note);
+}
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.innerHTML = t(el.dataset.i18n); });
+  document.getElementById('search-input').placeholder = t('searchPh');
+  document.getElementById('lang-label').textContent = lang.toUpperCase();
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.documentElement.lang = lang;
+}
+function toggleDropdown(id, e){
+  e.stopPropagation();
+  const dd = document.getElementById(id);
+  const wasOpen = dd.classList.contains('open');
+  document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open'));
+  if(!wasOpen) dd.classList.add('open');
+}
+document.getElementById('btn-theme').addEventListener('click', e=>toggleDropdown('dd-theme', e));
+document.getElementById('btn-lang').addEventListener('click', e=>toggleDropdown('dd-lang', e));
+document.addEventListener('click', ()=>document.querySelectorAll('.dropdown').forEach(d=>d.classList.remove('open')));
+document.getElementById('btn-mode').addEventListener('click', function(){
+  mode = mode === 'light' ? 'dark' : 'light';
+  document.body.dataset.mode = mode;
+  this.textContent = mode === 'light' ? '🌙' : '☀️';
+  persist();
+});
+
+// ═══════════════════════════════════════════
+// SAVE / LOAD PROGRESS
+// ═══════════════════════════════════════════
+document.getElementById('btn-save').addEventListener('click', ()=>{
+  const data = { product:'SafeLife', module:'chronic-conditions', version:1, savedAt:new Date().toISOString(), completed:[...completed], lang, theme, mode };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'SafeLife_Chronic_Progress_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById('btn-load').addEventListener('click', ()=>document.getElementById('load-file').click());
+document.getElementById('load-file').addEventListener('change', function(){
+  const file = this.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const d = JSON.parse(reader.result);
+      if(d.module !== 'chronic-conditions' && !confirm('This file was saved from a different module. Load anyway?')) return;
+      completed.clear();
+      (d.completed||[]).forEach(id=>completed.add(id));
+      if(false && d.lang && I18N[d.lang]) lang = d.lang; /* language switching disabled for English-only release — remove "false &&" to re-enable */
+      if(d.theme) theme = d.theme;
+      if(d.mode) mode = d.mode;
+      document.body.dataset.theme = theme;
+      document.body.dataset.mode = mode;
+      document.getElementById('btn-mode').textContent = mode === 'light' ? '🌙' : '☀️';
+      applyLang(); renderAll(); buildThemeMenu(); buildLangMenu(); persist();
+    }catch(e){ alert('Could not read that file — is it a SafeLife progress file?'); }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+// ═══════════════════════════════════════════
+// MODALS / PRINT / NAV
+// ═══════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-close').forEach(b=>b.addEventListener('click', ()=>closeModal(b.dataset.close)));
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click', e=>{ if(e.target === o) o.classList.remove('open'); }));
+document.getElementById('btn-manual').addEventListener('click', ()=>openModal('modal-manual'));
+document.getElementById('btn-cheat').addEventListener('click', ()=>openModal('modal-cheat'));
+document.getElementById('btn-print').addEventListener('click', ()=>openModal('modal-print'));
+document.getElementById('btn-search').addEventListener('click', ()=>{
+  const s = document.getElementById('search-input');
+  s.scrollIntoView({behavior:'smooth', block:'center'});
+  setTimeout(()=>s.focus(), 350);
+});
+
+function doPrint(cls){
+  document.querySelectorAll('.modal-overlay').forEach(o=>o.classList.remove('open'));
+  const wasOpen = new Set([...document.querySelectorAll('.check-card.open')]);
+  document.querySelectorAll('.check-card').forEach(c=>c.classList.add('open'));
+  if(cls) document.body.classList.add(cls);
+  const cleanup = ()=>{
+    document.body.classList.remove('print-zone','print-cheat');
+    document.querySelectorAll('.check-card').forEach(c=>{ if(!wasOpen.has(c)) c.classList.remove('open'); });
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  setTimeout(()=>window.print(), 60);
+}
+document.getElementById('print-all').addEventListener('click', ()=>doPrint(null));
+document.getElementById('print-zone').addEventListener('click', ()=>doPrint('print-zone'));
+document.getElementById('print-cheat2').addEventListener('click', ()=>doPrint('print-cheat'));
+document.getElementById('btn-print-cheat').addEventListener('click', ()=>doPrint('print-cheat'));
+
+function visibleCards(){
+  return [...document.querySelectorAll('.zone-panel.active .check-card')].filter(c=>c.style.display !== 'none');
+}
+function nearestCardIx(cards){
+  const mark = window.innerHeight * 0.35;
+  let best = 0, bestDist = Infinity;
+  cards.forEach((c, i)=>{
+    const d = Math.abs(c.getBoundingClientRect().top - mark);
+    if(d < bestDist){ bestDist = d; best = i; }
+  });
+  return best;
+}
+function goToCard(cards, ix){
+  if(ix < 0){ window.scrollTo({top:0, behavior:'smooth'}); return; }
+  if(ix > cards.length - 1) ix = cards.length - 1;
+  const y = cards[ix].getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.35;
+  window.scrollTo({top: Math.max(0, y), behavior:'smooth'});
+}
+document.getElementById('fn-top').addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
+document.getElementById('fn-next').addEventListener('click', ()=>{
+  const cards = visibleCards(); if(!cards.length) return;
+  goToCard(cards, nearestCardIx(cards) + 1);
+});
+document.getElementById('fn-prev').addEventListener('click', ()=>{
+  const cards = visibleCards(); if(!cards.length) return;
+  goToCard(cards, nearestCardIx(cards) - 1);
+});
+
+// ═══════════════════════════════════════════
+// MANUAL / CHEAT SHEET / COLLECTION
+// ═══════════════════════════════════════════
+function buildManual(){
+  document.getElementById('manual-body').innerHTML =
+    t('manualBody') +
+    '<h4>⚕</h4><p>' + t('disclaimer') + ' ' + t('langNote') + '</p>';
+}
+
+const GOLDEN_RULES = [
+  'Keep every medication list current and store it where any caregiver can find it in an emergency',
+  'Store insulin and other refrigerated medicines at the correct temperature, and keep a backup plan for power cuts',
+  'Know the specific triggers and warning signs for each condition in the household — do not assume they are the same for everyone',
+  'Keep rescue medication (epinephrine auto-injector, fast-acting glucose, rescue inhaler) within reach at all times, including outings',
+  'Position someone safely on their side during and after a seizure, and never restrain them or put anything in their mouth',
+  'Call emergency services for anaphylaxis, a suspected cardiac event, a seizure lasting longer than a recognised threshold, or severe hypoglycaemia that does not respond to treatment',
+  'Read every food and product label — cross-contamination can happen even with familiar brands',
+  'Brief every regular carer, school and workplace on the action plan, not just the diagnosis',
+  'Treat caregiver rest and support as a genuine safety measure, not an optional extra',
+  'A chronic condition is a daily management task, not a tragedy — plan calmly, and build confidence alongside caution'
+];
+const KEY_NUMBERS = [
+  ['Hypoglycaemia threshold (adults, general guidance)','blood glucose below 3.9 mmol/L (70 mg/dL) — recognised ADA guidance'],
+  ['Severe hypoglycaemia','blood glucose below 3.0 mmol/L (54 mg/dL) — recognised ADA guidance'],
+  ['General pre-meal glucose target (individualised)','roughly 4.4–7.2 mmol/L (80–130 mg/dL) — recognised ADA guidance, confirm target with the care team'],
+  ['Insulin storage (unopened)','refrigerated at 2–8°C (36–46°F) — recognised diabetes care guidance'],
+  ['Insulin in use (opened)','many types stable at room temperature up to about 25–30°C (77–86°F) for roughly 28 days — confirm with product information'],
+  ['Seizure duration requiring emergency call','longer than 5 minutes, or repeated seizures without full recovery between them — recognised epilepsy care guidance'],
+  ['Recovery position after a seizure or loss of consciousness','on the side, airway clear, until fully alert — recognised first-aid guidance'],
+  ['Epinephrine auto-injector repeat dose','a second dose may be considered after approximately 5–15 minutes without improvement, while awaiting emergency services — recognised anaphylaxis care guidance'],
+  ['Medication room-temperature storage (general)','roughly 15–25°C (59–77°F) unless the label states otherwise'],
+  ['Hand hygiene before medication administration','wash hands for at least 20 seconds — WHO guidance'],
+  ['Comfortable indoor temperature','18–24°C (64–75°F)'],
+  ['Medical summary review','update after every appointment or any medication change'],
+  ['Emergency contact list check','review and reprint at least every few months'],
+  ['Portable emergency kit check','review contents and expiry dates at least monthly']
+];
+
+const CONTACTS_KEY = 'safelife-chronic-contacts';
+const DEFAULT_CONTACTS = [
+  ['Emergency services',''],
+  ['GP / family doctor',''],
+  ['Specialist (endocrinologist / neurologist / cardiologist / allergist)',''],
+  ['Pharmacist',''],
+  ['School / workplace nurse or first-aider',''],
+  ['Backup caregiver','']
+];
+let contacts;
+try{
+  const raw = localStorage.getItem(CONTACTS_KEY);
+  contacts = raw ? JSON.parse(raw) : null;
+}catch(e){ contacts = null; }
+if(!contacts || !Array.isArray(contacts.list)) contacts = { list: DEFAULT_CONTACTS.map(c=>c.slice()), notes:'' };
+function saveContacts(){
+  try{ localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts)); }catch(e){}
+  buildCheatPrint();
+}
+function buildCheat(){
+  const body = document.getElementById('cheat-body');
+  const rules = GOLDEN_RULES.map(r=>'<li>' + r + '</li>').join('');
+  const nums = KEY_NUMBERS.map(n=>'<tr><td><strong>' + n[0] + '</strong></td><td>' + n[1] + '</td></tr>').join('');
+  body.innerHTML =
+    '<h4>📞 ' + t('cheatContacts') + '</h4>' +
+    '<p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px;">' + t('cheatHint') + '</p>' +
+    '<div id="contact-rows"></div>' +
+    '<button class="btn btn-outline" id="add-contact" style="margin:8px 0 4px;">' + t('addContact') + '</button>' +
+    '<h4>⭐ ' + t('rules') + '</h4><ul class="rule-list">' + rules + '</ul>' +
+    '<h4>📏 ' + t('keyNums') + '</h4><table><tr><th>Check</th><th>Safe value / standard</th></tr>' + nums + '</table>' +
+    '<h4>📝 ' + t('myNotes') + '</h4>' +
+    '<textarea id="cheat-notes" placeholder="' + t('notesPh') + '" style="width:100%;min-height:80px;border:1px solid var(--line);border-radius:8px;background:var(--tile);color:var(--ink);padding:10px 12px;font-family:\'Inter\',sans-serif;font-size:13px;resize:vertical;"></textarea>';
+  renderContactRows();
+  const notesEl = document.getElementById('cheat-notes');
+  notesEl.value = contacts.notes || '';
+  notesEl.addEventListener('input', function(){ contacts.notes = this.value; saveContacts(); });
+  document.getElementById('add-contact').addEventListener('click', function(){
+    contacts.list.push(['','']);
+    renderContactRows(); saveContacts();
+    const rows = document.querySelectorAll('#contact-rows .c-name');
+    rows[rows.length-1].focus();
+  });
+  buildCheatPrint();
+}
+function renderContactRows(){
+  const wrap = document.getElementById('contact-rows');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const inputCss = 'border:1px solid var(--line);border-radius:8px;background:var(--tile);color:var(--ink);padding:8px 10px;font-family:\'Inter\',sans-serif;font-size:13px;';
+  contacts.list.forEach((c, ix)=>{
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;align-items:center;';
+    const name = document.createElement('input');
+    name.className = 'c-name'; name.type = 'text'; name.value = c[0];
+    name.placeholder = 'Name / service'; name.style.cssText = inputCss + 'flex:1.4;min-width:0;';
+    const num = document.createElement('input');
+    num.type = 'text'; num.value = c[1];
+    num.placeholder = '+ number'; num.style.cssText = inputCss + 'flex:1;min-width:0;font-weight:700;';
+    const del = document.createElement('button');
+    del.textContent = '✕'; del.title = t('delRow');
+    del.style.cssText = 'border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);border-radius:8px;width:30px;height:34px;cursor:pointer;flex-shrink:0;';
+    name.addEventListener('input', function(){ contacts.list[ix][0] = this.value; saveContacts(); });
+    num.addEventListener('input', function(){ contacts.list[ix][1] = this.value; saveContacts(); });
+    del.addEventListener('click', function(){ contacts.list.splice(ix,1); renderContactRows(); saveContacts(); });
+    row.append(name, num, del);
+    wrap.appendChild(row);
+  });
+}
+function buildCheatPrint(){
+  const esc = s => String(s).replace(/</g,'&lt;');
+  const filled = contacts.list.filter(c=>c[0] || c[1]);
+  const chips = filled.map(h=>'<div class="cp-chip"><b>' + esc(h[0]||'—') + '</b><span>' + (esc(h[1]) || '____________') + '</span></div>').join('');
+  const rules = GOLDEN_RULES.map(r=>'<li>' + r + '</li>').join('');
+  const nums = KEY_NUMBERS.map(n=>'<tr><td><strong>' + n[0] + '</strong></td><td>' + n[1] + '</td></tr>').join('');
+  const activeQR = getSavedQR() || QR_IMAGE;
+  const qr = activeQR
+    ? '<img src="' + activeQR + '" alt="QR">'
+    : '<div class="qr-ph">' + (STORE_URL ? esc(STORE_URL) : 'Your QR<br>code here') + '</div>';
+  document.getElementById('cheat-print').innerHTML =
+    '<div class="cp-card">' +
+      '<div class="cp-head">' + ICONS.stage +
+        '<div><div class="cp-title">Safe<em>Life</em></div>' +
+        '<div class="cp-sub">' + t('cheatTitle') + ' · ' + t('heroTitle') + '</div></div>' +
+        '<div class="cp-tag">"To all moms by a mom"<br>NEBOSH &amp; OSHA trained HSE professional</div>' +
+      '</div>' +
+      '<div class="cp-contacts">' + chips + '</div>' +
+      '<div class="cp-cols">' +
+        '<div class="cp-rules"><h3>⭐ ' + t('rules') + '</h3><ul>' + rules + '</ul></div>' +
+        '<div class="cp-numsec"><h3>📏 ' + t('keyNums') + '</h3><table>' + nums + '</table></div>' +
+      '</div>' +
+      (contacts.notes ? '<div class="cp-notes"><b>' + t('myNotes') + '</b>' + esc(contacts.notes) + '</div>' : '') +
+      '<div class="cp-foot">' +
+        '<div>Made with care by <b>' + BRAND_NAME + '</b> · SafeLife Collection<br>' + t('disclaimer') + '</div>' +
+        '<div class="cp-qr">' + (STORE_URL ? '<div style="font-size:8px;">' + esc(STORE_URL) + '<br>Scan for the full collection</div>' : '') + qr + '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+// ═══════════════════════════════════════════
+// SELLER: per-product QR code, PIN-protected (each file's own STORE_KEY keeps these separate)
+// ═══════════════════════════════════════════
+const QR_KEY = STORE_KEY + '-qr';
+const QR_PIN_KEY = STORE_KEY + '-qrpin';
+function getSavedQR(){ try{ return localStorage.getItem(QR_KEY) || ''; }catch(e){ return ''; } }
+function sellerRenderLocked(){
+  const hasPin = !!localStorage.getItem(QR_PIN_KEY);
+  document.getElementById('seller-body').innerHTML = hasPin
+    ? '<p>Enter your PIN to manage this file\'s QR code.</p><input type="password" inputmode="numeric" maxlength="12" id="seller-pin-input" placeholder="PIN" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--tile);color:var(--ink);font-size:15px;letter-spacing:2px;margin-bottom:10px;">'
+      + '<div class="modal-actions"><button class="btn btn-primary" id="seller-unlock">Unlock</button></div>'
+    : '<p>No PIN set yet for this file. Create one now — you\'ll need it to change the QR code later. Every product file keeps its own separate PIN and QR code.</p>'
+      + '<input type="password" inputmode="numeric" maxlength="12" id="seller-pin-new" placeholder="Create a PIN" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--tile);color:var(--ink);font-size:15px;letter-spacing:2px;margin-bottom:8px;">'
+      + '<input type="password" inputmode="numeric" maxlength="12" id="seller-pin-confirm" placeholder="Confirm PIN" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--tile);color:var(--ink);font-size:15px;letter-spacing:2px;margin-bottom:10px;">'
+      + '<div class="modal-actions"><button class="btn btn-primary" id="seller-setpin">Set PIN</button></div>';
+  if(hasPin){
+    document.getElementById('seller-unlock').addEventListener('click', function(){
+      const val = document.getElementById('seller-pin-input').value;
+      if(val && val === localStorage.getItem(QR_PIN_KEY)) sellerRenderUnlocked();
+      else alert('Incorrect PIN.');
+    });
+  } else {
+    document.getElementById('seller-setpin').addEventListener('click', function(){
+      const a = document.getElementById('seller-pin-new').value, b = document.getElementById('seller-pin-confirm').value;
+      if(!a || a.length < 4){ alert('Use at least 4 digits.'); return; }
+      if(a !== b){ alert('PINs do not match.'); return; }
+      try{ localStorage.setItem(QR_PIN_KEY, a); }catch(e){}
+      sellerRenderUnlocked();
+    });
+  }
+}
+function sellerRenderUnlocked(){
+  const current = getSavedQR();
+  document.getElementById('seller-body').innerHTML =
+    '<p>Upload this product\'s QR code image. It replaces the placeholder on the printed cheat sheet — saved on this device only, separately for every product file.</p>' +
+    (current ? '<img src="' + current + '" style="width:110px;height:110px;border:1px solid var(--line);border-radius:9px;margin-bottom:10px;object-fit:contain;background:#fff;">' : '') +
+    '<input type="file" accept="image/*" id="seller-qr-file" style="margin-bottom:10px;">' +
+    '<div class="modal-actions">' +
+      '<button class="btn btn-outline" id="seller-remove-qr">Remove QR</button>' +
+      '<button class="btn btn-outline" id="seller-change-pin">Change PIN</button>' +
+      '<button class="btn btn-primary" id="seller-done">Done</button>' +
+    '</div>';
+  document.getElementById('seller-qr-file').addEventListener('change', function(e){
+    const file = e.target.files && e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      try{ localStorage.setItem(QR_KEY, ev.target.result); }catch(e){}
+      buildCheatPrint();
+      sellerRenderUnlocked();
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('seller-remove-qr').addEventListener('click', function(){
+    try{ localStorage.removeItem(QR_KEY); }catch(e){}
+    buildCheatPrint();
+    sellerRenderUnlocked();
+  });
+  document.getElementById('seller-change-pin').addEventListener('click', function(){
+    try{ localStorage.removeItem(QR_PIN_KEY); }catch(e){}
+    sellerRenderLocked();
+  });
+  document.getElementById('seller-done').addEventListener('click', ()=>closeModal('modal-seller'));
+}
+document.getElementById('btn-seller').addEventListener('click', function(){ sellerRenderLocked(); openModal('modal-seller'); });
+
+const MODULES = [
+  {a:'0–28 Days'},
+  {a:'1–12 Months'},
+  {a:'1–3 Years'},
+  {a:'3–6 Years'},
+  {a:'6–12 Years'},
+  {a:'13–18 Years'},
+  {a:'19–29 Years'},
+  {a:'30–44 Years'},
+  {a:'45–64 Years'},
+  {a:'65–79 Years'},
+  {a:'80–89 Years'},
+  {a:'90+ Years'}
+];
+const MODULE_ICON_IX = [0,0,1,2,3,4,5,6,6,7,7,7];
+const SITUATION_MODULES = [
+  {name:'Pregnancy', sub:'Stage 0', status:'available', emoji:'🤰'},
+  {name:'Postpartum Recovery', sub:'Situation Module', status:'available', emoji:'🌷'},
+  {name:'Grandparent-Proofing', sub:'Situation Module', status:'available', emoji:'👵'},
+  {name:'Autism & Neurodivergent Children', sub:'Situation Module', status:'available', emoji:'♾️'},
+  {name:'Emergency Preparedness', sub:'Situation Module', status:'available', emoji:'🧳'},
+  {name:'Twins & Multiples', sub:'Situation Module', status:'available', emoji:'👯'},
+  {name:'Babysitter/Nanny Handover', sub:'Situation Module', status:'available', emoji:'🗒️'},
+  {name:'Dementia & Alzheimer\'s Care', sub:'Situation Module', status:'available', emoji:'🏠'},
+  {name:'Injury & Post-Surgery Recovery', sub:'Situation Module', status:'available', emoji:'🩹'},
+  {name:'Chronic Conditions Household', sub:'Situation Module', status:'current', emoji:'💊'},
+  {name:'Limited Mobility / Wheelchair', sub:'Coming Soon', status:'available', emoji:'♿'},
+  {name:'Visually / Hearing Impaired', sub:'Situation Module', status:'available', emoji:'🔔'},
+  {name:'New Pet + Baby Household', sub:'Coming Soon', status:'coming', emoji:'🐾'},
+  {name:'The Caregiver\'s Own Safety', sub:'Coming Soon', status:'coming', emoji:'🤲'},
+  {name:'New Home Move-In Audit', sub:'Coming Soon', status:'coming', emoji:'🏡'},
+  {name:'Farm & Rural Household', sub:'Coming Soon', status:'coming', emoji:'🚜'},
+  {name:'Home Office / WFH', sub:'Coming Soon', status:'coming', emoji:'💻'}
+];
+function buildSituationGrid(){
+  const grid = document.getElementById('situation-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  SITUATION_MODULES.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    const tagClass = m.status === 'coming' ? 'coming' : (m.status === 'current' ? 'owned' : 'addon');
+    const tagLabel = m.status === 'coming' ? 'Coming Soon' : (m.status === 'current' ? '✓ Current Module' : 'Available Separately');
+    card.innerHTML = '<span class="m-emoji">' + m.emoji + '</span><span class="m-name">' + m.name + '</span><span class="m-age">' + m.sub + '</span>' +
+      '<span class="module-tag ' + tagClass + '">' + tagLabel + '</span>';
+    grid.appendChild(card);
+  });
+}
+
+function buildCollection(){
+  const grid = document.getElementById('collection-grid');
+  grid.innerHTML = '';
+  MODULES.forEach((m, mi)=>{
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    const iconIx = MODULE_ICON_IX[mi] != null ? MODULE_ICON_IX[mi] : mi;
+    card.innerHTML = '<span class="m-emoji">' + ICONS.stages[iconIx] + '</span><span class="m-name">' + t('mn'+(mi+1)) + '</span><span class="m-age">' + m.a + '</span>' +
+      '<span class="module-tag ' + (m.owned ? 'owned' : 'addon') + '">' + (m.owned ? t('owned') : t('addon')) + '</span>';
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+restore();
+injectIcons();
+document.body.dataset.theme = theme;
+document.body.dataset.mode = mode;
+document.getElementById('btn-mode').textContent = mode === 'light' ? '🌙' : '☀️';
+applyLang();
+fillStats();
+renderAll();
+buildThemeMenu();
+buildLangMenu();
+buildManual();
+buildCheat();
+buildCollection();
+buildSituationGrid();
+</script>
+</body>
+</html>
+
